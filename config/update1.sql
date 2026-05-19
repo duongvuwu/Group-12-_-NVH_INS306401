@@ -1,3 +1,8 @@
+﻿-- update1.sql
+-- Purpose: Seed VNU student mock data and normalize all user emails to @vnu.edu.vn.
+-- Scope: 100 students per department, 6 departments total, 600 students.
+-- Rule: Each group of 10 students has 8 three-word names and 2 four-word names.
+-- Safe to rerun: uses ON DUPLICATE KEY UPDATE for seeded IDs 1001-1600.
 USE license_management_db;
 
 UPDATE users
@@ -610,3 +615,4 @@ ON DUPLICATE KEY UPDATE
     full_name = VALUES(full_name),
     email = VALUES(email),
     role = VALUES(role);
+
