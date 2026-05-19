@@ -48,13 +48,14 @@ class PlatformAdminController
             }
 
             if ($action === 'add_user') {
+                $email = $this->buildVnuEmail($_POST['email_prefix'] ?? ($_POST['email'] ?? ''));
                 $id = $this->model->addUser(
                     positive_int($_POST['dept_id'] ?? null, 'Khoa/phòng ban'),
                     $_POST['full_name'] ?? '',
-                    $_POST['email'] ?? '',
+                    $email,
                     $_POST['role'] ?? ''
                 );
-                $this->audit->record('create_user', 'user', $id, ['email' => $_POST['email'] ?? '']);
+                $this->audit->record('create_user', 'user', $id, ['email' => $email]);
                 redirect_with_flash('admin', 'success', 'Đã thêm người dùng mới.');
             }
 
@@ -82,5 +83,18 @@ class PlatformAdminController
         } catch (Throwable $exception) {
             redirect_with_flash('admin', 'error', $exception->getMessage());
         }
+    }
+
+    private function buildVnuEmail(string $value): string
+    {
+        $raw = strtolower(trim($value));
+        if ($raw === '') {
+            return '';
+        }
+
+        $localPart = explode('@', $raw, 2)[0];
+        $localPart = preg_replace('/[^a-z0-9._-]/', '', $localPart) ?? '';
+
+        return $localPart !== '' ? $localPart . '@vnu.edu.vn' : '';
     }
 }

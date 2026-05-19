@@ -64,7 +64,10 @@ $softwareCount = count($data['softwares']);
             </div>
         </div>
         <input class="input-shell rounded-xl" type="text" name="full_name" placeholder="Họ tên" required>
-        <input class="input-shell mt-3 rounded-xl" type="email" name="email" placeholder="email@university.edu.vn" required>
+        <div class="mt-3 flex items-center overflow-hidden rounded-xl border border-slate-300/70 bg-white/80 shadow-sm transition-all duration-300 focus-within:border-teal-400 focus-within:ring-4 focus-within:ring-teal-100 dark:border-white/10 dark:bg-white/10 dark:focus-within:ring-teal-400/10">
+            <input class="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100" type="text" name="email_prefix" placeholder="nguyenvana123" pattern="[A-Za-z0-9._-]+" autocomplete="off" required>
+            <span class="shrink-0 border-l border-slate-200/80 px-4 py-3 text-sm font-semibold text-teal-700 dark:border-white/10 dark:text-teal-200">@vnu.edu.vn</span>
+        </div>
         <select class="input-shell mt-3 rounded-xl" name="dept_id" required>
             <?php foreach ($data['departments'] as $department): ?>
                 <option value="<?= (int)$department['id'] ?>"><?= e($department['name']) ?></option>

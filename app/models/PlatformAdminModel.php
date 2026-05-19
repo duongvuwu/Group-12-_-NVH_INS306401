@@ -95,6 +95,10 @@ class PlatformAdminModel
             throw new InvalidArgumentException('Email không hợp lệ.');
         }
 
+        if (!preg_match('/^[a-z0-9._-]+@vnu\.edu\.vn$/', $email)) {
+            throw new InvalidArgumentException('Email phải sử dụng tên miền @vnu.edu.vn.');
+        }
+
         if (!in_array($role, ['Student', 'Teacher', 'Admin'], true)) {
             throw new InvalidArgumentException('Vai trò người dùng không hợp lệ.');
         }
