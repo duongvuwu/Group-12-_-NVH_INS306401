@@ -112,7 +112,7 @@ $softwareCount = count($data['softwares']);
             <input class="input-shell max-w-xs rounded-xl" data-table-filter="departments-table" placeholder="Lọc khoa...">
         </div>
         <div class="overflow-x-auto">
-            <table id="departments-table" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
+            <table id="departments-table" data-page-size="10" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
                 <thead class="bg-white/40 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900/40">
                     <tr>
                         <th class="px-5 py-3 text-left">Khoa</th>
@@ -143,6 +143,7 @@ $softwareCount = count($data['softwares']);
                 </tbody>
             </table>
         </div>
+        <div class="border-t border-white/60 px-5 py-3 dark:border-white/10" data-table-pager="departments-table"></div>
     </div>
 
     <div class="<?= e($glassCard) ?> overflow-hidden">
@@ -157,7 +158,7 @@ $softwareCount = count($data['softwares']);
             <input class="input-shell max-w-xs rounded-xl" data-table-filter="users-table" placeholder="Lọc người dùng...">
         </div>
         <div class="overflow-x-auto">
-            <table id="users-table" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
+            <table id="users-table" data-page-size="10" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
                 <thead class="bg-white/40 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900/40">
                     <tr>
                         <th class="px-5 py-3 text-left">Người dùng</th>
@@ -190,6 +191,7 @@ $softwareCount = count($data['softwares']);
                 </tbody>
             </table>
         </div>
+        <div class="border-t border-white/60 px-5 py-3 dark:border-white/10" data-table-pager="users-table"></div>
     </div>
 </section>
 
@@ -205,7 +207,7 @@ $softwareCount = count($data['softwares']);
         <input class="input-shell max-w-xs rounded-xl" data-table-filter="softwares-table" placeholder="Lọc phần mềm...">
     </div>
     <div class="overflow-x-auto">
-        <table id="softwares-table" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
+        <table id="softwares-table" data-page-size="10" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
             <thead class="bg-white/40 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900/40">
                 <tr>
                     <th class="px-5 py-3 text-left">Phần mềm</th>
@@ -242,6 +244,7 @@ $softwareCount = count($data['softwares']);
             </tbody>
         </table>
     </div>
+    <div class="border-t border-white/60 px-5 py-3 dark:border-white/10" data-table-pager="softwares-table"></div>
 </section>
 <?php
 $content = ob_get_clean();

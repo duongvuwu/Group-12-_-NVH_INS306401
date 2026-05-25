@@ -11,6 +11,8 @@ class Layout
         $extraScripts = $options['scripts'] ?? '';
         $emojiBase = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
         $shield3d = $emojiBase . '/Objects/Shield.png';
+        $appJsPath = BASE_PATH . '/public/assets/app.js';
+        $appJsVersion = is_file($appJsPath) ? (string)filemtime($appJsPath) : (string)time();
         $navItems = [
             ['page' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
             ['page' => 'admin', 'label' => 'Nền tảng', 'icon' => 'building-2'],
@@ -198,7 +200,7 @@ class Layout
     <script>
         window.__FLASH__ = <?= json_encode($flash, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     </script>
-    <script src="assets/app.js"></script>
+    <script src="assets/app.js?v=<?= e($appJsVersion) ?>"></script>
     <?= $extraScripts ?>
 </body>
 </html>

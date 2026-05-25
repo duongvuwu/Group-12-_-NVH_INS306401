@@ -63,17 +63,185 @@
         });
     }
 
+    function tableRows(table) {
+        return Array.from(table.querySelectorAll('tbody tr'));
+    }
+
+    function tablePageSize(table) {
+        const size = parseInt(table.dataset.pageSize || '0', 10);
+        return Number.isFinite(size) && size > 0 ? size : 0;
+    }
+
+    function tableMatches(row, query) {
+        return !query || row.textContent.toLowerCase().includes(query);
+    }
+
+    function compactPageNumbers(currentPage, totalPages) {
+        const pages = new Set([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
+
+        if (currentPage <= 3) {
+            [2, 3, 4].forEach((page) => pages.add(page));
+        }
+
+        if (currentPage >= totalPages - 2) {
+            [totalPages - 3, totalPages - 2, totalPages - 1].forEach((page) => pages.add(page));
+        }
+
+        return Array.from(pages)
+            .filter((page) => page >= 1 && page <= totalPages)
+            .sort((a, b) => a - b);
+    }
+
+    function pagerButton(label, tableId, page, isActive, isDisabled) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = label;
+        button.dataset.pageTarget = tableId;
+        button.dataset.page = String(page);
+        button.disabled = isDisabled;
+        button.className = isActive
+            ? 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl bg-slate-950 px-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-white dark:text-slate-950'
+            : 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white/75 px-3 text-sm font-semibold text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-300 hover:text-teal-700 hover:shadow-md disabled:pointer-events-none disabled:opacity-40 dark:border-white/10 dark:bg-white/10 dark:text-slate-200 dark:hover:border-teal-300/40 dark:hover:text-teal-200';
+
+        return button;
+    }
+
+    function renderTablePager(table, meta) {
+        const pager = document.querySelector(`[data-table-pager="${table.id}"]`);
+        if (!pager) return;
+
+        pager.innerHTML = '';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between';
+
+        const info = document.createElement('p');
+        info.className = 'text-xs font-medium text-slate-500 dark:text-slate-400';
+        info.textContent = meta.filteredCount
+            ? `Hiển thị ${meta.from}-${meta.to} / ${meta.filteredCount} nội dung`
+            : 'Không có nội dung phù hợp';
+        wrap.appendChild(info);
+
+        if (meta.totalPages > 1) {
+            const controls = document.createElement('div');
+            controls.className = 'flex max-w-full items-center gap-2 overflow-x-auto pb-1';
+
+            controls.appendChild(pagerButton('Trước', table.id, meta.currentPage - 1, false, meta.currentPage === 1));
+
+            const chips = document.createElement('div');
+            chips.className = 'flex items-center gap-1';
+            let previousPage = 0;
+            compactPageNumbers(meta.currentPage, meta.totalPages).forEach((page) => {
+                if (previousPage && page - previousPage > 1) {
+                    const gap = document.createElement('span');
+                    gap.className = 'px-1 text-sm font-semibold text-slate-400';
+                    gap.textContent = '...';
+                    chips.appendChild(gap);
+                }
+
+                chips.appendChild(pagerButton(String(page), table.id, page, page === meta.currentPage, false));
+                previousPage = page;
+            });
+            controls.appendChild(chips);
+
+            const select = document.createElement('select');
+            select.dataset.pageTarget = table.id;
+            select.className = 'h-9 rounded-xl border border-slate-200/80 bg-white/80 px-3 text-sm font-semibold text-slate-600 shadow-sm outline-none transition-all duration-300 hover:border-teal-300 focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:border-white/10 dark:bg-white/10 dark:text-slate-100 dark:focus:ring-teal-400/10';
+            for (let page = 1; page <= meta.totalPages; page += 1) {
+                const option = document.createElement('option');
+                option.value = String(page);
+                option.textContent = `Trang ${page}`;
+                select.appendChild(option);
+            }
+            select.value = String(meta.currentPage);
+            controls.appendChild(select);
+
+            controls.appendChild(pagerButton('Sau', table.id, meta.currentPage + 1, false, meta.currentPage === meta.totalPages));
+            wrap.appendChild(controls);
+        }
+
+        pager.appendChild(wrap);
+    }
+
+    function applyTableState(table) {
+        const rows = tableRows(table);
+        const pageSize = tablePageSize(table);
+        const query = table.dataset.filterQuery || '';
+        const matchingRows = rows.filter((row) => tableMatches(row, query));
+        const totalPages = pageSize ? Math.max(1, Math.ceil(matchingRows.length / pageSize)) : 1;
+        const requestedPage = parseInt(table.dataset.currentPage || '1', 10);
+        const currentPage = Math.min(Math.max(Number.isFinite(requestedPage) ? requestedPage : 1, 1), totalPages);
+        const firstIndex = pageSize ? (currentPage - 1) * pageSize : 0;
+        const lastIndex = pageSize ? firstIndex + pageSize : matchingRows.length;
+        let matchIndex = 0;
+
+        table.dataset.currentPage = String(currentPage);
+
+        rows.forEach((row) => {
+            const isMatch = tableMatches(row, query);
+            let isVisible = isMatch;
+
+            if (isMatch && pageSize) {
+                isVisible = matchIndex >= firstIndex && matchIndex < lastIndex;
+                matchIndex += 1;
+            }
+
+            row.hidden = !isVisible;
+            row.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+            row.style.display = isVisible ? '' : 'none';
+        });
+
+        if (pageSize) {
+            renderTablePager(table, {
+                currentPage,
+                filteredCount: matchingRows.length,
+                from: matchingRows.length ? firstIndex + 1 : 0,
+                to: Math.min(lastIndex, matchingRows.length),
+                totalPages
+            });
+        }
+    }
+
     function initTableFilters() {
         document.querySelectorAll('[data-table-filter]').forEach((input) => {
-            input.addEventListener('input', () => {
-                const table = document.getElementById(input.dataset.tableFilter);
-                if (!table) return;
+            const table = document.getElementById(input.dataset.tableFilter);
+            if (!table) return;
 
-                const query = input.value.trim().toLowerCase();
-                table.querySelectorAll('tbody tr').forEach((row) => {
-                    row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-                });
+            table.dataset.filterQuery = input.value.trim().toLowerCase();
+            input.addEventListener('input', () => {
+                table.dataset.filterQuery = input.value.trim().toLowerCase();
+                table.dataset.currentPage = '1';
+                applyTableState(table);
             });
+        });
+    }
+
+    function initTablePagination() {
+        document.querySelectorAll('table[data-page-size]').forEach((table) => {
+            table.dataset.currentPage = table.dataset.currentPage || '1';
+            applyTableState(table);
+        });
+
+        document.addEventListener('click', (event) => {
+            const button = event.target.closest('button[data-page-target]');
+            if (!button) return;
+
+            const table = document.getElementById(button.dataset.pageTarget);
+            if (!table) return;
+
+            table.dataset.currentPage = button.dataset.page || '1';
+            applyTableState(table);
+        });
+
+        document.addEventListener('change', (event) => {
+            const select = event.target.closest('select[data-page-target]');
+            if (!select) return;
+
+            const table = document.getElementById(select.dataset.pageTarget);
+            if (!table) return;
+
+            table.dataset.currentPage = select.value;
+            applyTableState(table);
         });
     }
 
@@ -258,6 +426,7 @@
         iconRefresh();
         initTheme();
         initTableFilters();
+        initTablePagination();
         initConfirmModal();
 
         if (window.__FLASH__) {
