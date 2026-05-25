@@ -99,9 +99,12 @@
         button.dataset.pageTarget = tableId;
         button.dataset.page = String(page);
         button.disabled = isDisabled;
+        if (isActive) {
+            button.setAttribute('aria-current', 'page');
+        }
         button.className = isActive
-            ? 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl bg-slate-950 px-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-white dark:text-slate-950'
-            : 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white/75 px-3 text-sm font-semibold text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-300 hover:text-teal-700 hover:shadow-md disabled:pointer-events-none disabled:opacity-40 dark:border-white/10 dark:bg-white/10 dark:text-slate-200 dark:hover:border-teal-300/40 dark:hover:text-teal-200';
+            ? 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-slate-950 bg-slate-950 px-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/20 dark:bg-slate-950 dark:text-white'
+            : 'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white/75 px-3 text-sm font-semibold text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-300 hover:text-teal-700 hover:shadow-md disabled:pointer-events-none disabled:opacity-40 dark:border-white/20 dark:bg-slate-900/80 dark:text-white dark:hover:border-teal-300/50 dark:hover:bg-slate-800 dark:hover:text-white';
 
         return button;
     }
@@ -146,7 +149,7 @@
 
             const select = document.createElement('select');
             select.dataset.pageTarget = table.id;
-            select.className = 'h-9 rounded-xl border border-slate-200/80 bg-white/80 px-3 text-sm font-semibold text-slate-600 shadow-sm outline-none transition-all duration-300 hover:border-teal-300 focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:border-white/10 dark:bg-white/10 dark:text-slate-100 dark:focus:ring-teal-400/10';
+            select.className = 'h-9 rounded-xl border border-slate-200/80 bg-white/80 px-3 text-sm font-semibold text-slate-600 shadow-sm outline-none transition-all duration-300 hover:border-teal-300 focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:border-white/20 dark:bg-slate-950 dark:text-white dark:focus:ring-teal-400/10';
             for (let page = 1; page <= meta.totalPages; page += 1) {
                 const option = document.createElement('option');
                 option.value = String(page);

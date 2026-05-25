@@ -73,6 +73,66 @@ class Layout
         .dark .app-content .dark\:text-white {
             color: #020617 !important;
         }
+        .dark aside nav a,
+        .dark aside nav a svg,
+        .dark aside nav a i,
+        .dark aside .dark-sidebar-text {
+            color: #fff !important;
+            stroke: #fff !important;
+        }
+        .dark aside nav a.bg-slate-950 {
+            background: rgba(2, 6, 23, .92) !important;
+            color: #fff !important;
+        }
+        .dark aside nav a:hover {
+            color: #fff !important;
+        }
+        .dark .app-content button,
+        .dark .app-content button *,
+        .dark .app-content [role="button"],
+        .dark .app-content [role="button"] * {
+            color: #fff !important;
+        }
+        .dark .app-content button:not([data-page-target]):not([data-confirm-cancel]),
+        .dark .app-content [role="button"] {
+            background-color: #020617 !important;
+            border-color: rgba(255, 255, 255, .14) !important;
+        }
+        .dark button[data-page-target] {
+            background: rgba(15, 23, 42, .88) !important;
+            border-color: rgba(255, 255, 255, .18) !important;
+            color: #fff !important;
+        }
+        .dark .app-content button[data-page-target],
+        .dark .app-content button[data-page-target] *,
+        .dark .app-content select[data-page-target] {
+            color: #fff !important;
+        }
+        .dark button[data-page-target][aria-current="page"] {
+            background: #020617 !important;
+            border-color: rgba(255, 255, 255, .28) !important;
+            color: #fff !important;
+            box-shadow: 0 12px 28px rgba(2, 6, 23, .45) !important;
+        }
+        .dark button[data-page-target]:disabled {
+            background: rgba(15, 23, 42, .45) !important;
+            color: #cbd5e1 !important;
+            opacity: .65 !important;
+        }
+        .dark select[data-page-target] {
+            background-color: #020617 !important;
+            border-color: rgba(255, 255, 255, .18) !important;
+            color: #fff !important;
+        }
+        .dark select[data-page-target] option {
+            background-color: #020617 !important;
+            color: #fff !important;
+        }
+        .dark [data-table-pager],
+        .dark [data-table-pager] p,
+        .dark [data-table-pager] span {
+            color: #fff !important;
+        }
         .input-shell {
             width: 100%;
             border-radius: .75rem;
@@ -116,8 +176,8 @@ class Layout
                     <img src="<?= e($shield3d) ?>" alt="LicenseOS Shield" class="h-9 w-9 object-contain drop-shadow-xl">
                 </span>
                 <span>
-                    <span class="block text-sm font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-teal-300">LicenseOS</span>
-                    <span class="block text-xs text-slate-500 dark:text-slate-400">SaaS Control Center</span>
+                    <span class="dark-sidebar-text block text-sm font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-white">LicenseOS</span>
+                    <span class="dark-sidebar-text block text-xs text-slate-500 dark:text-white">SaaS Control Center</span>
                 </span>
             </a>
 
@@ -125,19 +185,19 @@ class Layout
                 <?php foreach ($navItems as $item): ?>
                     <?php $isActive = $activePage === $item['page']; ?>
                     <a href="<?= e(app_url($item['page'])) ?>"
-                       class="group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white shadow-lg shadow-slate-950/15 dark:bg-white dark:text-slate-950' : 'text-slate-600 hover:bg-white/70 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white' ?>">
+                       class="group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white shadow-lg shadow-slate-950/15 dark:bg-slate-950 dark:text-white' : 'text-slate-600 hover:bg-white/70 hover:text-slate-950 dark:text-white dark:hover:bg-white/10 dark:hover:text-white' ?>">
                         <i data-lucide="<?= e($item['icon']) ?>" class="h-5 w-5"></i>
                         <?= e($item['label']) ?>
                     </a>
                 <?php endforeach; ?>
             </nav>
 
-            <div class="mt-auto rounded-2xl border border-teal-500/20 bg-teal-500/10 p-4 text-sm text-slate-600 shadow-lg backdrop-blur dark:text-slate-300">
-                <div class="mb-2 flex items-center gap-2 font-semibold text-teal-700 dark:text-teal-200">
+            <div class="dark-sidebar-text mt-auto rounded-2xl border border-teal-500/20 bg-teal-500/10 p-4 text-sm text-slate-600 shadow-lg backdrop-blur dark:text-white">
+                <div class="dark-sidebar-text mb-2 flex items-center gap-2 font-semibold text-teal-700 dark:text-white">
                     <i data-lucide="sparkles" class="h-4 w-4"></i>
                     Smart guard
                 </div>
-                <p>Transaction cấp key, prepared statements và audit log đang bảo vệ các thao tác nhạy cảm.</p>
+                <p class="dark-sidebar-text">Transaction cấp key, prepared statements và audit log đang bảo vệ các thao tác nhạy cảm.</p>
             </div>
         </aside>
 
@@ -167,7 +227,7 @@ class Layout
     <nav class="glass-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 rounded-t-2xl p-1.5 shadow-xl lg:hidden">
         <?php foreach ($navItems as $item): ?>
             <?php $isActive = $activePage === $item['page']; ?>
-            <a href="<?= e(app_url($item['page'])) ?>" class="flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950' : 'text-slate-500 hover:bg-white/70 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/10' ?>">
+            <a href="<?= e(app_url($item['page'])) ?>" class="flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white dark:bg-slate-950 dark:text-white' : 'text-slate-500 hover:bg-white/70 hover:text-slate-950 dark:text-white dark:hover:bg-white/10' ?>">
                 <i data-lucide="<?= e($item['icon']) ?>" class="h-4 w-4"></i>
                 <span class="max-w-full truncate"><?= e($item['label']) ?></span>
             </a>
