@@ -60,7 +60,7 @@ $cards = [
     <div class="relative grid gap-6 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.28em] text-teal-600 dark:text-teal-300">Next-gen SaaS Operations</p>
-            <h2 class="mt-3 text-3xl font-semibold tracking-normal text-slate-950 dark:text-white sm:text-4xl">Dashboard vận hành License</h2>
+            <h2 class="dashboard-readable mt-3 text-3xl font-semibold tracking-normal text-slate-950 dark:text-slate-200 sm:text-4xl">Dashboard vận hành License</h2>
             <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
                 Theo dõi tồn kho key, license đang dùng, nhu cầu theo khoa và cảnh báo hết hạn trong một màn hình điều phối gọn, mượt, đúng chuẩn XAMPP localhost.
             </p>
@@ -79,7 +79,7 @@ $cards = [
             <div class="relative flex items-center justify-between gap-4">
                 <div class="min-w-0">
                     <p class="text-sm font-semibold text-slate-500 dark:text-slate-400"><?= e($card['label']) ?></p>
-                    <p class="mt-2 text-4xl font-semibold text-slate-950 dark:text-white"><?= e($card['value']) ?></p>
+                    <p class="dashboard-readable mt-2 text-4xl font-semibold text-slate-950 dark:text-slate-200"><?= e($card['value']) ?></p>
                     <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"><?= e($card['hint']) ?></p>
                 </div>
                 <div class="grid h-16 w-16 shrink-0 place-items-center rounded-lg bg-white/65 shadow-sm ring-1 ring-white/70 backdrop-blur-xl transition-all duration-300 group-hover:rotate-3 group-hover:scale-110 dark:bg-white/10 dark:ring-white/10">
@@ -95,7 +95,7 @@ $cards = [
         <div class="flex items-center justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-teal-300">Smooth Charts</p>
-                <h3 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Tồn kho theo phần mềm</h3>
+                <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Tồn kho theo phần mềm</h3>
             </div>
             <img class="h-12 w-12 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Key.png') ?>" alt="Key 3D">
         </div>
@@ -108,7 +108,7 @@ $cards = [
         <div class="flex items-center justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[.24em] text-indigo-600 dark:text-indigo-300">Department Demand</p>
-                <h3 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Nhu cầu theo khoa</h3>
+                <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Nhu cầu theo khoa</h3>
             </div>
             <img class="h-12 w-12 drop-shadow-lg" src="<?= e($emojiBase . '/Travel%20and%20places/School.png') ?>" alt="Khoa 3D">
         </div>
@@ -122,7 +122,7 @@ $cards = [
     <div class="flex flex-col gap-3 border-b border-slate-200/70 px-5 py-4 dark:border-slate-700/60 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.24em] text-amber-600 dark:text-amber-300">Lifecycle Watch</p>
-            <h3 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">License sắp hết hạn trong 14 ngày</h3>
+            <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">License sắp hết hạn trong 14 ngày</h3>
         </div>
         <img class="h-11 w-11 drop-shadow-lg" src="<?= e($emojiBase . '/Travel%20and%20places/Alarm%20Clock.png') ?>" alt="Cảnh báo 3D">
     </div>
@@ -140,7 +140,7 @@ $cards = [
                 <?php if ($expiringAllocations): ?>
                     <?php foreach ($expiringAllocations as $row): ?>
                         <tr class="table-row">
-                            <td class="px-5 py-4 font-medium text-slate-900 dark:text-white"><?= e($row['full_name']) ?></td>
+                            <td class="dashboard-readable px-5 py-4 font-medium text-slate-900 dark:text-slate-200"><?= e($row['full_name']) ?></td>
                             <td class="px-5 py-4 text-sm text-slate-600 dark:text-slate-300"><?= e($row['software_name']) ?></td>
                             <td class="px-5 py-4 text-sm text-slate-600 dark:text-slate-300"><?= e($row['department_name']) ?></td>
                             <td class="px-5 py-4 text-right">

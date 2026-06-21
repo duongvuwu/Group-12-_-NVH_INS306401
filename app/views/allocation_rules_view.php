@@ -3,7 +3,7 @@ ob_start();
 $emojiBase = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 $glassCard = 'bg-white/80 backdrop-blur-lg border border-white/50 shadow-lg rounded-2xl dark:bg-slate-950/60 dark:border-white/10';
 $motionCard = $glassCard . ' transition-all duration-300 hover:-translate-y-1 hover:shadow-xl';
-$buttonClass = 'inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-slate-950 dark:text-white dark:hover:bg-teal-600';
+$buttonClass = 'primary-action inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-teal-600 dark:text-white dark:shadow-teal-950/30 dark:hover:bg-teal-500';
 $dangerButton = 'inline-flex h-9 w-9 items-center justify-center rounded-xl text-rose-600 transition-all duration-300 hover:-translate-y-1 hover:bg-rose-100 hover:shadow-md dark:text-rose-300 dark:hover:bg-rose-500/15';
 $suggestionPayload = [];
 foreach ($suggestionsByDepartment as $departmentId => $items) {
@@ -22,7 +22,7 @@ foreach ($suggestionsByDepartment as $departmentId => $items) {
     <div class="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.28em] text-indigo-600 dark:text-indigo-300">Allocation Policy</p>
-            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">Luật cấp phát thông minh</h2>
+            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-slate-200">Luật cấp phát thông minh</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Định nghĩa ai được dùng phần mềm nào theo khoa và vai trò; backend chặn trùng luật và chặn xóa luật đang có license active.</p>
         </div>
         <img class="h-24 w-24 drop-shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:scale-105" src="<?= e($emojiBase . '/Objects/Clipboard.png') ?>" alt="Luật cấp phát 3D">
@@ -36,7 +36,7 @@ foreach ($suggestionsByDepartment as $departmentId => $items) {
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Locked.png') ?>" alt="Policy 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Tạo luật cấp phát</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Tạo luật cấp phát</h3>
                 <p class="text-sm text-slate-500">Phần mềm + khoa + vai trò là duy nhất</p>
             </div>
         </div>
@@ -81,7 +81,7 @@ foreach ($suggestionsByDepartment as $departmentId => $items) {
             <img class="h-16 w-16 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Shield.png') ?>" alt="Guard 3D">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-teal-300">Backend Guard</p>
-                <h3 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Luật đẹp nhưng dữ liệu phải chắc</h3>
+                <h3 class="mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Luật đẹp nhưng dữ liệu phải chắc</h3>
                 <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Model dùng prepared statements, kiểm tra trùng tổ hợp, và không cho xóa luật khi vẫn còn allocation active phụ thuộc. Luồng cấp phát thực tế dùng transaction + khóa dòng key trống.</p>
             </div>
         </div>
@@ -107,7 +107,7 @@ foreach ($suggestionsByDepartment as $departmentId => $items) {
         <div class="flex items-center gap-3">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Clipboard.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Danh sách luật cấp phát</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Danh sách luật cấp phát</h3>
                 <p class="text-sm text-slate-500">Quét nhanh quan hệ phần mềm - khoa - vai trò.</p>
             </div>
         </div>
@@ -130,7 +130,7 @@ foreach ($suggestionsByDepartment as $departmentId => $items) {
                     <?php foreach ($rules as $rule): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($rule['software_name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($rule['software_name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($rule['vendor']) ?></p>
                             </td>
                             <td class="px-5 py-4 text-sm"><?= e($rule['department_name']) ?></td>

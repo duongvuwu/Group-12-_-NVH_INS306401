@@ -3,11 +3,12 @@ ob_start();
 $emojiBase = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 $glassCard = 'bg-white/80 backdrop-blur-lg border border-white/50 shadow-lg rounded-2xl dark:bg-slate-950/60 dark:border-white/10';
 $motionCard = $glassCard . ' transition-all duration-300 hover:-translate-y-1 hover:shadow-xl';
-$buttonClass = 'inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-slate-950 dark:text-white dark:hover:bg-teal-600';
+$buttonClass = 'primary-action inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-teal-600 dark:text-white dark:shadow-teal-950/30 dark:hover:bg-teal-500';
 $actionButton = 'inline-flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md';
 $activeCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Active'));
 $expiredCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Expired'));
 $revokedCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Revoked'));
+$hasAvailableSoftware = count(array_filter($softwares, static fn($software) => (int)$software['available_quantity'] > 0)) > 0;
 ?>
 
 <section class="<?= e($glassCard) ?> relative overflow-hidden p-6">
@@ -15,7 +16,7 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
     <div class="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.28em] text-teal-600 dark:text-teal-300">Transaction-safe Allocation</p>
-            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">Cấp phát license</h2>
+            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-slate-200">Cấp phát license</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Kiểm tra luật, rút key còn trống bằng transaction, ghi nhận kích hoạt và thu hồi key theo vòng đời license.</p>
         </div>
         <img class="h-24 w-24 drop-shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:scale-105" src="<?= e($emojiBase . '/Objects/Key.png') ?>" alt="Key 3D">
@@ -29,7 +30,7 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Key.png') ?>" alt="Cấp phát 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Cấp phát license</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Cấp phát license</h3>
                 <p class="text-sm text-slate-500">Luật hợp lệ mới được rút key</p>
             </div>
         </div>
@@ -43,8 +44,14 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
 
         <label class="mt-4 block text-sm font-medium text-slate-700 dark:text-slate-200">Phần mềm</label>
         <select class="input-shell mt-2 rounded-xl" name="software_id" required>
+            <?php $availableSoftwareSelected = false; ?>
             <?php foreach ($softwares as $software): ?>
-                <option value="<?= (int)$software['id'] ?>"><?= e($software['name']) ?> · <?= (int)$software['available_quantity'] ?> key trống</option>
+                <?php $isOutOfStock = (int)$software['available_quantity'] < 1; ?>
+                <?php $isFirstAvailable = !$isOutOfStock && !$availableSoftwareSelected; ?>
+                <option value="<?= (int)$software['id'] ?>" <?= $isOutOfStock ? 'disabled' : '' ?> <?= $isFirstAvailable ? 'selected' : '' ?>>
+                    <?= e($software['name']) ?> · <?= (int)$software['available_quantity'] ?> key trống<?= $isOutOfStock ? ' · Hết key' : '' ?>
+                </option>
+                <?php if ($isFirstAvailable) $availableSoftwareSelected = true; ?>
             <?php endforeach; ?>
         </select>
 
@@ -52,13 +59,15 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
         <div class="mt-2 grid grid-cols-3 gap-2">
             <?php foreach ([30 => '30 ngày', 180 => '180 ngày', 365 => '365 ngày'] as $days => $label): ?>
                 <label class="cursor-pointer rounded-2xl border border-white/60 bg-white/65 p-3 text-center text-sm font-semibold shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-teal-400 hover:shadow-md dark:border-white/10 dark:bg-white/10">
-                    <input class="sr-only peer" type="radio" name="duration_days" value="<?= $days ?>" <?= $days === 365 ? 'checked' : '' ?>>
+                    <input class="sr-only peer" type="radio" name="duration_days" value="<?= $days ?>" <?= $days === 30 ? 'checked' : '' ?>>
                     <span class="peer-checked:text-teal-600 dark:peer-checked:text-teal-300"><?= e($label) ?></span>
                 </label>
             <?php endforeach; ?>
         </div>
 
-        <button class="<?= e($buttonClass) ?> mt-5 w-full" type="submit">Cấp phát ngay</button>
+        <button class="<?= e($buttonClass) ?> mt-5 w-full disabled:cursor-not-allowed disabled:opacity-50" type="submit" <?= $hasAvailableSoftware ? '' : 'disabled' ?>>
+            <?= $hasAvailableSoftware ? 'Cấp phát ngay' : 'Kho chưa có key trống' ?>
+        </button>
     </form>
 
     <div class="grid gap-4 sm:grid-cols-3">
@@ -91,7 +100,7 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
         <div class="flex items-center gap-3">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Clipboard.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Lịch sử cấp phát</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Lịch sử cấp phát</h3>
                 <p class="text-sm text-slate-500">Theo dõi key, kích hoạt, hết hạn và thu hồi.</p>
             </div>
         </div>
@@ -115,11 +124,11 @@ $revokedCount = count(array_filter($allocations, static fn($row) => $row['status
                     <?php foreach ($allocations as $allocation): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($allocation['full_name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['full_name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($allocation['department_name']) ?> · <?= e(role_label($allocation['role'])) ?></p>
                             </td>
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($allocation['software_name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['software_name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($allocation['available_assets'] ?: 'Chưa có asset') ?></p>
                             </td>
                             <td class="px-5 py-4 font-mono text-sm text-slate-600 dark:text-slate-300"><?= e(mask_key($allocation['key_value'])) ?></td>

@@ -3,7 +3,7 @@ ob_start();
 $emojiBase = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 $glassCard = 'bg-white/80 backdrop-blur-lg border border-white/50 shadow-lg rounded-2xl dark:bg-slate-950/60 dark:border-white/10';
 $motionCard = $glassCard . ' transition-all duration-300 hover:-translate-y-1 hover:shadow-xl';
-$buttonClass = 'inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-slate-950 dark:text-white dark:hover:bg-teal-600';
+$buttonClass = 'primary-action inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-teal-600 dark:text-white dark:shadow-teal-950/30 dark:hover:bg-teal-500';
 $dangerButton = 'inline-flex h-9 w-9 items-center justify-center rounded-xl text-rose-600 transition-all duration-300 hover:-translate-y-1 hover:bg-rose-100 hover:shadow-md dark:text-rose-300 dark:hover:bg-rose-500/15';
 $departmentCount = count($data['departments']);
 $userCount = count($data['users']);
@@ -15,7 +15,7 @@ $softwareCount = count($data['softwares']);
     <div class="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.28em] text-teal-600 dark:text-teal-300">Master Data Control</p>
-            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">Nền tảng vận hành</h2>
+            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-slate-200">Nền tảng vận hành</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Quản lý khoa/phòng ban, người dùng và danh mục phần mềm trước khi bật luật cấp phát license.</p>
         </div>
         <div class="grid grid-cols-3 gap-3 text-center">
@@ -42,7 +42,7 @@ $softwareCount = count($data['softwares']);
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Travel%20and%20places/School.png') ?>" alt="Khoa 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Khoa/phòng ban</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Khoa/phòng ban</h3>
                 <p class="text-sm text-slate-500">Nền phân quyền theo đơn vị</p>
             </div>
         </div>
@@ -59,7 +59,7 @@ $softwareCount = count($data['softwares']);
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/People/Busts%20in%20Silhouette.png') ?>" alt="Người dùng 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Người dùng</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Người dùng</h3>
                 <p class="text-sm text-slate-500">Sinh viên, giảng viên, quản trị</p>
             </div>
         </div>
@@ -87,7 +87,7 @@ $softwareCount = count($data['softwares']);
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Laptop.png') ?>" alt="Phần mềm 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Phần mềm</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Phần mềm</h3>
                 <p class="text-sm text-slate-500">Danh mục tài sản bản quyền</p>
             </div>
         </div>
@@ -105,7 +105,7 @@ $softwareCount = count($data['softwares']);
             <div class="flex items-center gap-3">
                 <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Travel%20and%20places/School.png') ?>" alt="">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Danh sách khoa/phòng ban</h3>
+                    <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Danh sách khoa/phòng ban</h3>
                     <p class="text-sm text-slate-500">Chặn xóa nếu còn dữ liệu phụ thuộc.</p>
                 </div>
             </div>
@@ -125,7 +125,7 @@ $softwareCount = count($data['softwares']);
                     <?php foreach ($data['departments'] as $department): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($department['name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($department['name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($department['description'] ?: 'Chưa có mô tả') ?></p>
                             </td>
                             <td class="px-5 py-4 text-center text-sm"><?= (int)$department['user_count'] ?></td>
@@ -151,7 +151,7 @@ $softwareCount = count($data['softwares']);
             <div class="flex items-center gap-3">
                 <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/People/Busts%20in%20Silhouette.png') ?>" alt="">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Người dùng</h3>
+                    <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Người dùng</h3>
                     <p class="text-sm text-slate-500">Email duy nhất, phân quyền theo khoa.</p>
                 </div>
             </div>
@@ -172,7 +172,7 @@ $softwareCount = count($data['softwares']);
                     <?php foreach ($data['users'] as $user): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($user['full_name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($user['full_name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($user['email']) ?></p>
                             </td>
                             <td class="px-5 py-4 text-sm"><?= e($user['department_name']) ?></td>
@@ -200,7 +200,7 @@ $softwareCount = count($data['softwares']);
         <div class="flex items-center gap-3">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Laptop.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Danh mục phần mềm</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Danh mục phần mềm</h3>
                 <p class="text-sm text-slate-500">Không xóa phần mềm đã có dữ liệu phụ thuộc.</p>
             </div>
         </div>
@@ -223,7 +223,7 @@ $softwareCount = count($data['softwares']);
                 <?php foreach ($data['softwares'] as $software): ?>
                     <tr class="table-row">
                         <td class="px-5 py-4">
-                            <p class="font-medium text-slate-900 dark:text-white"><?= e($software['name']) ?></p>
+                            <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($software['name']) ?></p>
                             <p class="text-xs text-slate-500"><?= e($software['vendor']) ?></p>
                         </td>
                         <td class="px-5 py-4 text-center text-sm"><?= (int)$software['pool_count'] ?></td>

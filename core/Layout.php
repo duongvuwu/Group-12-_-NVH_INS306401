@@ -28,8 +28,13 @@ class Layout
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title) ?> | License Management</title>
     <script>
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = {
+        if (localStorage.getItem('license-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
@@ -42,11 +47,7 @@ class Layout
                 }
             }
         };
-        if (localStorage.getItem('license-theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -68,6 +69,21 @@ class Layout
         }
         .dark .app-title {
             color: #fff !important;
+        }
+        .theme-toggle-control {
+            border: 1px solid rgba(148, 163, 184, .55);
+            background: rgba(255, 255, 255, .76);
+            color: #475569;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+        }
+        .dark .theme-toggle-control {
+            border-color: rgba(148, 163, 184, .62) !important;
+            background: rgba(15, 23, 42, .88) !important;
+            color: #cbd5e1 !important;
+            box-shadow: 0 4px 14px rgba(2, 6, 23, .35) !important;
+        }
+        .dark .dashboard-readable {
+            color: #cbd5e1 !important;
         }
         .dark .app-content .text-white,
         .dark .app-content .dark\:text-white {
@@ -93,7 +109,9 @@ class Layout
         .dark .app-content [role="button"] * {
             color: #fff !important;
         }
-        .dark .app-content button:not([data-page-target]):not([data-confirm-cancel]),
+        .dark .app-content button.primary-action {
+            color: #fff !important;
+        }
         .dark .app-content [role="button"] {
             background-color: #020617 !important;
             border-color: rgba(255, 255, 255, .14) !important;
@@ -211,7 +229,7 @@ class Layout
                     <a href="<?= e(app_url('dashboard')) ?>" class="grid h-10 w-10 place-items-center rounded-xl text-slate-600 transition-all duration-300 hover:-translate-y-1 hover:bg-slate-900 hover:text-white hover:shadow-md dark:text-slate-300 dark:hover:bg-white dark:hover:text-slate-950 lg:hidden" title="Dashboard">
                         <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
                     </a>
-                    <button type="button" data-theme-toggle class="grid h-10 w-10 place-items-center rounded-xl text-slate-600 transition-all duration-300 hover:-translate-y-1 hover:bg-slate-900 hover:text-white hover:shadow-md dark:text-slate-300 dark:hover:bg-white dark:hover:text-slate-950" title="Đổi giao diện sáng/tối">
+                    <button type="button" data-theme-toggle class="theme-toggle-control grid h-10 w-10 place-items-center rounded-xl ring-1 ring-slate-900/5 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-slate-400 hover:bg-slate-900 hover:text-white hover:shadow-md dark:ring-white/10 dark:hover:border-slate-400 dark:hover:bg-slate-800 dark:hover:text-white" title="Đổi giao diện sáng/tối">
                         <i data-lucide="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-lucide="sun" class="hidden h-5 w-5 dark:block"></i>
                     </button>

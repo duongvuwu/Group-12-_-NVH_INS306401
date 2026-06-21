@@ -3,7 +3,7 @@ ob_start();
 $emojiBase = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 $glassCard = 'bg-white/80 backdrop-blur-lg border border-white/50 shadow-lg rounded-2xl dark:bg-slate-950/60 dark:border-white/10';
 $motionCard = $glassCard . ' transition-all duration-300 hover:-translate-y-1 hover:shadow-xl';
-$buttonClass = 'inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-slate-950 dark:text-white dark:hover:bg-teal-600';
+$buttonClass = 'primary-action inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-600 hover:shadow-md dark:bg-teal-600 dark:text-white dark:shadow-teal-950/30 dark:hover:bg-teal-500';
 $dangerButton = 'inline-flex h-9 w-9 items-center justify-center rounded-xl text-rose-600 transition-all duration-300 hover:-translate-y-1 hover:bg-rose-100 hover:shadow-md dark:text-rose-300 dark:hover:bg-rose-500/15';
 $poolCount = count($pools);
 $assetCount = count($assets);
@@ -15,7 +15,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
     <div class="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[.28em] text-emerald-600 dark:text-emerald-300">Inventory & Download Center</p>
-            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">Kho license vận hành</h2>
+            <h2 class="mt-2 text-3xl font-semibold text-slate-950 dark:text-slate-200">Kho license vận hành</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Tạo pool, nhập key chi tiết và quản lý link cài đặt theo hệ điều hành trong cùng một luồng kiểm soát.</p>
         </div>
         <div class="grid grid-cols-3 gap-3 text-center">
@@ -42,7 +42,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Package.png') ?>" alt="Pool 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Tạo pool license</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Tạo pool license</h3>
                 <p class="text-sm text-slate-500">Kho tổng trước khi nhập key</p>
             </div>
         </div>
@@ -69,7 +69,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Objects/Key.png') ?>" alt="Key 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Nhập key chi tiết</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Nhập key chi tiết</h3>
                 <p class="text-sm text-slate-500">Mỗi dòng là một serial</p>
             </div>
         </div>
@@ -89,7 +89,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="mb-5 flex items-center gap-3">
             <img class="h-14 w-14 drop-shadow-xl" src="<?= e($emojiBase . '/Symbols/Down%20Arrow.png') ?>" alt="Download 3D">
             <div>
-                <h3 class="font-semibold text-slate-950 dark:text-white">Link cài đặt</h3>
+                <h3 class="font-semibold text-slate-950 dark:text-slate-200">Link cài đặt</h3>
                 <p class="text-sm text-slate-500">Download center theo OS</p>
             </div>
         </div>
@@ -115,7 +115,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="flex items-center gap-3">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Bar%20Chart.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Tổng quan tồn kho</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Tổng quan tồn kho</h3>
                 <p class="text-sm text-slate-500">Tổng hợp pool, key và link cài đặt theo phần mềm.</p>
             </div>
         </div>
@@ -138,7 +138,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
                     <?php $total = max(1, (int)$item['total_quantity']); $percent = min(100, round(((int)$item['free_key_count'] / $total) * 100)); ?>
                     <tr class="table-row">
                         <td class="px-5 py-4">
-                            <p class="font-medium text-slate-900 dark:text-white"><?= e($item['name']) ?></p>
+                            <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($item['name']) ?></p>
                             <p class="text-xs text-slate-500"><?= e($item['vendor']) ?></p>
                         </td>
                         <td class="px-5 py-4 text-center text-sm"><?= (int)$item['pool_count'] ?></td>
@@ -163,7 +163,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="flex items-center gap-3 border-b border-white/60 px-5 py-4 dark:border-white/10">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Package.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Pool license</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Pool license</h3>
                 <p class="text-sm text-slate-500">Pool ghi số lượng tổng; key thật nằm ở license_keys.</p>
             </div>
         </div>
@@ -181,7 +181,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
                     <?php foreach ($pools as $pool): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white">#<?= (int)$pool['id'] ?> · <?= e($pool['software_name']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200">#<?= (int)$pool['id'] ?> · <?= e($pool['software_name']) ?></p>
                                 <p class="text-xs text-slate-500"><?= e($pool['vendor']) ?> · mua <?= format_date($pool['purchase_date']) ?></p>
                             </td>
                             <td class="px-5 py-4 text-center text-sm"><?= (int)$pool['key_count'] ?>/<?= (int)$pool['total_quantity'] ?></td>
@@ -198,7 +198,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
         <div class="flex items-center gap-3 border-b border-white/60 px-5 py-4 dark:border-white/10">
             <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Symbols/Down%20Arrow.png') ?>" alt="">
             <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-white">Software assets</h3>
+                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Software assets</h3>
                 <p class="text-sm text-slate-500">Link tải hiển thị khi người dùng nhận license.</p>
             </div>
         </div>
@@ -215,7 +215,7 @@ $freeKeys = array_sum(array_map(static fn($item) => (int)$item['free_key_count']
                     <?php foreach ($assets as $asset): ?>
                         <tr class="table-row">
                             <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-white"><?= e($asset['software_name']) ?> <?= e($asset['version']) ?></p>
+                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($asset['software_name']) ?> <?= e($asset['version']) ?></p>
                                 <a class="text-xs font-semibold text-teal-600 transition hover:text-teal-700 hover:underline dark:text-teal-300" href="<?= e($asset['download_url']) ?>" target="_blank" rel="noopener">Mở link tải</a>
                             </td>
                             <td class="px-5 py-4 text-center text-sm"><?= e($asset['os_type']) ?></td>
