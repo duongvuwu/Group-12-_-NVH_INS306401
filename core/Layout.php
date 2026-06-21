@@ -13,6 +13,8 @@ class Layout
         $shield3d = $emojiBase . '/Objects/Shield.png';
         $appJsPath = BASE_PATH . '/public/assets/app.js';
         $appJsVersion = is_file($appJsPath) ? (string)filemtime($appJsPath) : (string)time();
+        $i18nJsPath = BASE_PATH . '/public/assets/i18n.js';
+        $i18nJsVersion = is_file($i18nJsPath) ? (string)filemtime($i18nJsPath) : (string)time();
         $navItems = [
             ['page' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
             ['page' => 'admin', 'label' => 'Nền tảng', 'icon' => 'building-2'],
@@ -81,6 +83,26 @@ class Layout
             background: rgba(15, 23, 42, .88) !important;
             color: #cbd5e1 !important;
             box-shadow: 0 4px 14px rgba(2, 6, 23, .35) !important;
+        }
+        .language-switcher {
+            border: 1px solid rgba(148, 163, 184, .55);
+            background: rgba(255, 255, 255, .76);
+            color: #64748b;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+        }
+        .dark .language-switcher {
+            border-color: rgba(148, 163, 184, .62);
+            background: rgba(15, 23, 42, .88);
+            color: #94a3b8;
+        }
+        .language-option[aria-pressed="true"] {
+            background: #0f172a;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .22);
+        }
+        .dark .language-option[aria-pressed="true"] {
+            background: #0d9488;
+            color: #fff;
         }
         .dark .dashboard-readable {
             color: #cbd5e1 !important;
@@ -233,6 +255,11 @@ class Layout
                         <i data-lucide="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-lucide="sun" class="hidden h-5 w-5 dark:block"></i>
                     </button>
+                    <div data-language-switcher class="language-switcher flex h-10 items-center gap-1 rounded-xl p-1 backdrop-blur" role="group" aria-label="Ngôn ngữ">
+                        <i data-lucide="languages" class="ml-1 hidden h-4 w-4 sm:block"></i>
+                        <button type="button" data-language-option="vi" class="language-option h-8 min-w-9 rounded-lg px-2 text-xs font-semibold transition-all duration-200" aria-pressed="true" title="Tiếng Việt">VI</button>
+                        <button type="button" data-language-option="en" class="language-option h-8 min-w-9 rounded-lg px-2 text-xs font-semibold transition-all duration-200" aria-pressed="false" title="English">EN</button>
+                    </div>
                 </div>
             </header>
 
@@ -278,6 +305,7 @@ class Layout
     <script>
         window.__FLASH__ = <?= json_encode($flash, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     </script>
+    <script src="assets/i18n.js?v=<?= e($i18nJsVersion) ?>"></script>
     <script src="assets/app.js?v=<?= e($appJsVersion) ?>"></script>
     <?= $extraScripts ?>
 </body>

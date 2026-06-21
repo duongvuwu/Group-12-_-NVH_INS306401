@@ -361,6 +361,7 @@
     window.renderDashboardCharts = function () {
         if (!window.Chart || !window.dashboardCharts) return;
 
+        const translate = window.appI18n?.t || ((value) => value);
         const dark = document.documentElement.classList.contains('dark');
         const gridColor = dark ? 'rgba(148, 163, 184, .18)' : 'rgba(148, 163, 184, .28)';
         const labelColor = dark ? '#cbd5e1' : '#475569';
@@ -376,8 +377,8 @@
                 data: {
                     labels: window.dashboardCharts.inventory.labels,
                     datasets: [
-                        { label: 'Đã cấp', data: window.dashboardCharts.inventory.used, backgroundColor: '#6366f1', borderRadius: 6 },
-                        { label: 'Còn trống', data: window.dashboardCharts.inventory.available, backgroundColor: '#14b8a6', borderRadius: 6 }
+                        { label: translate('Đã cấp'), data: window.dashboardCharts.inventory.used, backgroundColor: '#6366f1', borderRadius: 6 },
+                        { label: translate('Còn trống'), data: window.dashboardCharts.inventory.available, backgroundColor: '#14b8a6', borderRadius: 6 }
                     ]
                 },
                 options: {
@@ -424,6 +425,10 @@
             });
         }
     };
+
+    document.addEventListener('app:languagechange', () => {
+        window.renderDashboardCharts();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         iconRefresh();
