@@ -8,13 +8,13 @@ $assistantEmoji = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated
 >
     <section
         id="assistant-panel"
-        class="mb-3 hidden max-h-[min(72vh,640px)] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-2xl shadow-slate-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/95"
+        class="mb-3 hidden h-[min(72vh,640px)] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-2xl shadow-slate-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/95"
         role="dialog"
         aria-modal="false"
         aria-labelledby="assistant-title"
         aria-hidden="true"
     >
-        <header class="relative overflow-hidden border-b border-slate-200/80 px-4 py-3 dark:border-white/10">
+        <header class="relative z-10 shrink-0 overflow-hidden border-b border-slate-200/80 bg-white/95 px-4 py-3 dark:border-white/10 dark:bg-slate-950/95">
             <div class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-teal-300/25 blur-2xl dark:bg-teal-500/15"></div>
             <div class="relative flex items-center gap-3">
                 <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/70 bg-white/80 shadow-md dark:border-white/10 dark:bg-white/10">
@@ -36,9 +36,9 @@ $assistantEmoji = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated
             </div>
         </header>
 
-        <div data-assistant-messages class="min-h-64 flex-1 space-y-4 overflow-y-auto bg-slate-50/70 px-4 py-4 dark:bg-slate-950/40" aria-live="polite"></div>
+        <div data-assistant-messages class="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-slate-50/70 px-4 py-4 [scrollbar-gutter:stable] dark:bg-slate-950/40" aria-live="polite"></div>
 
-        <div data-assistant-typing class="hidden items-center gap-2 border-t border-slate-200/70 px-4 py-2 text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
+        <div data-assistant-typing class="hidden shrink-0 items-center gap-2 border-t border-slate-200/70 px-4 py-2 text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
             <span class="flex gap-1">
                 <span class="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-500 [animation-delay:-.3s]"></span>
                 <span class="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-500 [animation-delay:-.15s]"></span>
@@ -47,7 +47,7 @@ $assistantEmoji = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated
             Đang phân tích dữ liệu...
         </div>
 
-        <form data-assistant-form class="border-t border-slate-200/80 bg-white/90 p-3 dark:border-white/10 dark:bg-slate-950/90">
+        <form data-assistant-form class="relative z-10 shrink-0 border-t border-slate-200/80 bg-white/95 p-3 dark:border-white/10 dark:bg-slate-950/95">
             <div class="flex items-end gap-2 rounded-2xl border border-slate-300/80 bg-white p-2 shadow-sm transition focus-within:border-teal-500 focus-within:ring-4 focus-within:ring-teal-500/10 dark:border-white/15 dark:bg-slate-900">
                 <textarea
                     data-assistant-input
