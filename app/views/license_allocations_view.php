@@ -8,6 +8,26 @@ $actionButton = 'inline-flex h-9 w-9 items-center justify-center rounded-xl tran
 $activeCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Active'));
 $expiredCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Expired'));
 $revokedCount = count(array_filter($allocations, static fn($row) => $row['status'] === 'Revoked'));
+$activeAllocations = array_values(array_filter($allocations, static fn($row) => $row['status'] === 'Active'));
+$closedAllocations = array_values(array_filter($allocations, static fn($row) => $row['status'] !== 'Active'));
+$allocationSections = [
+    [
+        'id' => 'active-allocations-table',
+        'title' => 'Đang sử dụng',
+        'description' => 'License đang được người dùng sử dụng và còn trong vòng đời cấp phát.',
+        'filter' => 'Lọc license đang sử dụng...',
+        'empty' => 'Không có license nào đang sử dụng.',
+        'rows' => $activeAllocations,
+    ],
+    [
+        'id' => 'closed-allocations-table',
+        'title' => 'Quá hạn và đã thu hồi',
+        'description' => 'Lịch sử license đã hết hạn hoặc đã được thu hồi khỏi người dùng.',
+        'filter' => 'Lọc license quá hạn...',
+        'empty' => 'Chưa có license quá hạn hoặc đã thu hồi.',
+        'rows' => $closedAllocations,
+    ],
+];
 $hasAvailableSoftware = count(array_filter($softwares, static fn($software) => (int)$software['available_quantity'] > 0)) > 0;
 ?>
 
@@ -95,77 +115,87 @@ $hasAvailableSoftware = count(array_filter($softwares, static fn($software) => (
     </div>
 </section>
 
-<section class="<?= e($glassCard) ?> mt-5 overflow-hidden">
-    <div class="flex flex-col gap-3 border-b border-white/60 px-5 py-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-3">
-            <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Clipboard.png') ?>" alt="">
-            <div>
-                <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200">Lịch sử cấp phát</h3>
-                <p class="text-sm text-slate-500">Theo dõi key, kích hoạt, hết hạn và thu hồi.</p>
+<?php foreach ($allocationSections as $section): ?>
+    <section class="<?= e($glassCard) ?> mt-5 overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-white/60 px-5 py-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <img class="h-10 w-10 drop-shadow-lg" src="<?= e($emojiBase . '/Objects/Clipboard.png') ?>" alt="">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-200"><?= e($section['title']) ?></h3>
+                        <span class="inline-flex min-w-8 items-center justify-center whitespace-nowrap rounded-full bg-slate-950 px-2.5 py-1 text-xs font-semibold text-white dark:bg-teal-500 dark:text-slate-950">
+                            <?= count($section['rows']) ?>
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-500"><?= e($section['description']) ?></p>
+                </div>
             </div>
+            <input class="input-shell max-w-xs rounded-xl" data-table-filter="<?= e($section['id']) ?>" placeholder="<?= e($section['filter']) ?>">
         </div>
-        <input class="input-shell max-w-xs rounded-xl" data-table-filter="allocations-table" placeholder="Lọc cấp phát...">
-    </div>
-    <div class="overflow-x-auto">
-        <table id="allocations-table" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
-            <thead class="bg-white/40 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900/40">
-                <tr>
-                    <th class="px-5 py-3 text-left">Người dùng</th>
-                    <th class="px-5 py-3 text-left">Phần mềm</th>
-                    <th class="px-5 py-3 text-left">Key</th>
-                    <th class="px-5 py-3 text-left">Thời hạn</th>
-                    <th class="px-5 py-3 text-center">Trạng thái</th>
-                    <th class="px-5 py-3 text-center">Kích hoạt</th>
-                    <th class="px-5 py-3 text-right">Hành động</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100/80 dark:divide-slate-800">
-                <?php if ($allocations): ?>
-                    <?php foreach ($allocations as $allocation): ?>
-                        <tr class="table-row">
-                            <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['full_name']) ?></p>
-                                <p class="text-xs text-slate-500"><?= e($allocation['department_name']) ?> · <?= e(role_label($allocation['role'])) ?></p>
-                            </td>
-                            <td class="px-5 py-4">
-                                <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['software_name']) ?></p>
-                                <p class="text-xs text-slate-500"><?= e($allocation['available_assets'] ?: 'Chưa có asset') ?></p>
-                            </td>
-                            <td class="px-5 py-4 font-mono text-sm text-slate-600 dark:text-slate-300"><?= e(mask_key($allocation['key_value'])) ?></td>
-                            <td class="px-5 py-4 text-sm text-slate-600 dark:text-slate-300"><?= format_date($allocation['start_date']) ?> → <?= format_date($allocation['end_date']) ?></td>
-                            <td class="px-5 py-4 text-center">
-                                <span class="rounded-xl px-2.5 py-1 text-xs font-semibold ring-1 <?= e(status_badge_class($allocation['status'])) ?>"><?= e(status_label($allocation['status'])) ?></span>
-                            </td>
-                            <td class="px-5 py-4 text-center text-sm"><?= (int)$allocation['activation_count'] ?></td>
-                            <td class="px-5 py-4 text-right">
-                                <?php if ($allocation['status'] === 'Active'): ?>
-                                    <form method="POST" class="inline" data-confirm-submit data-confirm-message="Ghi nhận một lượt kích hoạt cho license này?">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="action" value="activate">
-                                        <input type="hidden" name="id" value="<?= (int)$allocation['id'] ?>">
-                                        <button class="<?= e($actionButton) ?> text-teal-600 hover:bg-teal-100 dark:text-teal-300 dark:hover:bg-teal-500/15" type="submit" title="Ghi nhận kích hoạt">●</button>
-                                    </form>
-                                    <form method="POST" class="inline" data-confirm-submit data-confirm-reason data-confirm-message="Thu hồi license này? Nếu pool cho phép tái sử dụng, key sẽ được trả lại kho.">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="action" value="revoke">
-                                        <input type="hidden" name="id" value="<?= (int)$allocation['id'] ?>">
-                                        <button class="<?= e($actionButton) ?> text-rose-600 hover:bg-rose-100 dark:text-rose-300 dark:hover:bg-rose-500/15" type="submit" title="Thu hồi">↺</button>
-                                    </form>
-                                <?php else: ?>
-                                    <span class="text-xs text-slate-400">Đã đóng</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+        <div class="overflow-x-auto">
+            <table id="<?= e($section['id']) ?>" data-page-size="10" class="min-w-[70rem] w-full divide-y divide-slate-200/80 dark:divide-slate-700">
+                <thead class="bg-white/40 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900/40">
                     <tr>
-                        <td colspan="7" class="px-5 py-8 text-center text-sm text-slate-500">Chưa có giao dịch cấp phát.</td>
+                        <th class="px-5 py-3 text-left">Người dùng</th>
+                        <th class="px-5 py-3 text-left">Phần mềm</th>
+                        <th class="px-5 py-3 text-left">Key</th>
+                        <th class="px-5 py-3 text-left">Thời hạn</th>
+                        <th class="min-w-32 px-5 py-3 text-center">Trạng thái</th>
+                        <th class="px-5 py-3 text-center">Kích hoạt</th>
+                        <th class="px-5 py-3 text-right">Hành động</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</section>
+                </thead>
+                <tbody class="divide-y divide-slate-100/80 dark:divide-slate-800">
+                    <?php if ($section['rows']): ?>
+                        <?php foreach ($section['rows'] as $allocation): ?>
+                            <tr class="table-row">
+                                <td class="px-5 py-4">
+                                    <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['full_name']) ?></p>
+                                    <p class="text-xs text-slate-500"><?= e($allocation['department_name']) ?> · <?= e(role_label($allocation['role'])) ?></p>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <p class="font-medium text-slate-900 dark:text-slate-200"><?= e($allocation['software_name']) ?></p>
+                                    <p class="text-xs text-slate-500"><?= e($allocation['available_assets'] ?: 'Chưa có asset') ?></p>
+                                </td>
+                                <td class="px-5 py-4 font-mono text-sm text-slate-600 dark:text-slate-300"><?= e(mask_key($allocation['key_value'])) ?></td>
+                                <td class="px-5 py-4 text-sm text-slate-600 dark:text-slate-300"><?= format_date($allocation['start_date']) ?> → <?= format_date($allocation['end_date']) ?></td>
+                                <td class="min-w-32 px-5 py-4 text-center">
+                                    <span class="inline-flex min-w-[7.5rem] items-center justify-center whitespace-nowrap rounded-xl px-3 py-1 text-xs font-semibold leading-5 ring-1 <?= e(status_badge_class($allocation['status'])) ?>">
+                                        <?= e(status_label($allocation['status'])) ?>
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-center text-sm"><?= (int)$allocation['activation_count'] ?></td>
+                                <td class="px-5 py-4 text-right">
+                                    <?php if ($allocation['status'] === 'Active'): ?>
+                                        <form method="POST" class="inline" data-confirm-submit data-confirm-message="Ghi nhận một lượt kích hoạt cho license này?">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="action" value="activate">
+                                            <input type="hidden" name="id" value="<?= (int)$allocation['id'] ?>">
+                                            <button class="<?= e($actionButton) ?> text-teal-600 hover:bg-teal-100 dark:text-teal-300 dark:hover:bg-teal-500/15" type="submit" title="Ghi nhận kích hoạt">●</button>
+                                        </form>
+                                        <form method="POST" class="inline" data-confirm-submit data-confirm-reason data-confirm-message="Thu hồi license này? Nếu pool cho phép tái sử dụng, key sẽ được trả lại kho.">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="action" value="revoke">
+                                            <input type="hidden" name="id" value="<?= (int)$allocation['id'] ?>">
+                                            <button class="<?= e($actionButton) ?> text-rose-600 hover:bg-rose-100 dark:text-rose-300 dark:hover:bg-rose-500/15" type="submit" title="Thu hồi">↺</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="whitespace-nowrap text-xs text-slate-400">Đã đóng</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" class="px-5 py-8 text-center text-sm text-slate-500"><?= e($section['empty']) ?></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="border-t border-white/60 px-5 py-4 dark:border-white/10" data-table-pager="<?= e($section['id']) ?>"></div>
+    </section>
+<?php endforeach; ?>
 <?php
 $content = ob_get_clean();
 Layout::render('Cấp phát license', 'allocations', $content, ['subtitle' => 'Transaction-safe Allocation']);

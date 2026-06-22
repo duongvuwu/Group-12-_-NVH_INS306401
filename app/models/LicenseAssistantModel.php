@@ -68,13 +68,18 @@ class LicenseAssistantModel
     {
         $limit = $this->safeLimit($limit, 20);
         $count = $this->conn->prepare(
-            "SELECT COUNT(*) FROM license_allocations WHERE status = 'Active' AND end_date < NOW()"
+            "SELECT
+                SUM(CASE WHEN status = 'Expired' THEN 1 ELSE 0 END) AS expired_total,
+                SUM(CASE WHEN status = 'Active' AND end_date < NOW() THEN 1 ELSE 0 END) AS pending_total
+             FROM license_allocations"
         );
         $count->execute();
+        $summary = $count->fetch() ?: ['expired_total' => 0, 'pending_total' => 0];
 
         $stmt = $this->conn->prepare(
             "SELECT
                 la.id,
+                la.status,
                 u.full_name,
                 u.email,
                 d.name AS department_name,
@@ -87,13 +92,24 @@ class LicenseAssistantModel
              JOIN license_keys lk ON lk.id = la.key_id
              JOIN license_pools lp ON lp.id = lk.pool_id
              JOIN software_titles s ON s.id = lp.software_id
-             WHERE la.status = 'Active' AND la.end_date < NOW()
-             ORDER BY la.end_date ASC
+             WHERE la.status = 'Expired'
+                OR (la.status = 'Active' AND la.end_date < NOW())
+             ORDER BY
+                CASE WHEN la.status = 'Active' THEN 0 ELSE 1 END,
+                la.end_date DESC
              LIMIT {$limit}"
         );
         $stmt->execute();
 
-        return ['total' => (int)$count->fetchColumn(), 'items' => $stmt->fetchAll()];
+        $expiredTotal = (int)$summary['expired_total'];
+        $pendingTotal = (int)$summary['pending_total'];
+
+        return [
+            'total' => $expiredTotal + $pendingTotal,
+            'expired_total' => $expiredTotal,
+            'pending_total' => $pendingTotal,
+            'items' => $stmt->fetchAll(),
+        ];
     }
 
     public function getTopDepartments(int $limit = 5): array

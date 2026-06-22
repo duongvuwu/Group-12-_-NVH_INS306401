@@ -113,27 +113,33 @@ class LicenseAssistantService
         $items = [];
 
         foreach ($data['items'] as $row) {
+            $needsAction = $row['status'] === 'Active';
             $items[] = [
                 'primary' => $row['full_name'],
                 'secondary' => $row['software_name'] . ' · ' . $row['department_name'],
                 'meta' => $row['email'],
-                'badge' => $english ? $row['overdue_days'] . ' days overdue' : 'Quá ' . $row['overdue_days'] . ' ngày',
-                'tone' => 'critical',
+                'badge' => $needsAction
+                    ? ($english ? 'Needs action' : 'Cần xử lý')
+                    : ($english ? $row['overdue_days'] . ' days expired' : 'Hết hạn ' . $row['overdue_days'] . ' ngày'),
+                'tone' => $needsAction ? 'critical' : 'warning',
             ];
         }
 
         return $this->response(
             'overdue_unrevoked',
-            $english ? 'Overdue licenses not revoked' : 'License quá hạn chưa thu hồi',
+            $english ? 'Expired and overdue licenses' : 'License đã hết hạn',
             $data['total'] > 0
                 ? ($english
-                    ? "{$data['total']} records are still Active after their end date. They should be reviewed immediately."
-                    : "Có {$data['total']} bản ghi vẫn Active sau ngày hết hạn và cần được xử lý ngay.")
-                : ($english ? 'No overdue Active licenses were found.' : 'Không phát hiện license Active nào đã quá hạn.'),
-            $data['total'] > 0 ? 'critical' : 'success',
-            [['label' => $english ? 'Needs review' : 'Cần xử lý', 'value' => $data['total']]],
+                    ? "There are {$data['expired_total']} expired licenses. {$data['pending_total']} additional records are still Active past their end date."
+                    : "Có {$data['expired_total']} license đã hết hạn. Ngoài ra có {$data['pending_total']} bản ghi vẫn Active quá ngày cần xử lý.")
+                : ($english ? 'No expired or overdue licenses were found.' : 'Không phát hiện license đã hết hạn hoặc Active quá ngày.'),
+            $data['pending_total'] > 0 ? 'critical' : ($data['expired_total'] > 0 ? 'warning' : 'success'),
+            [
+                ['label' => $english ? 'Expired' : 'Đã hết hạn', 'value' => $data['expired_total']],
+                ['label' => $english ? 'Needs action' : 'Cần xử lý', 'value' => $data['pending_total']],
+            ],
             $items,
-            ['label' => $english ? 'Open revocation workflow' : 'Mở luồng thu hồi', 'url' => app_url('allocations')],
+            ['label' => $english ? 'Open allocation history' : 'Mở lịch sử cấp phát', 'url' => app_url('allocations')],
             $this->defaultSuggestions($language)
         );
     }

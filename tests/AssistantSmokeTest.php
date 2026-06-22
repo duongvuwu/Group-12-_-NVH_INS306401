@@ -38,6 +38,15 @@ foreach ($intentCases as $question => $expectedIntent) {
     assertSameValue($expectedIntent, $response['intent'], 'Service intent mismatch for ' . $question);
 }
 
+$expiredResponse = $service->answer('Hiện license quá hạn', 'vi');
+$expectedExpired = (int)$db->query("SELECT COUNT(*) FROM license_allocations WHERE status = 'Expired'")->fetchColumn();
+$expiredMetric = array_values(array_filter(
+    $expiredResponse['metrics'],
+    static fn(array $metric): bool => $metric['label'] === 'Đã hết hạn'
+));
+assertSameValue(1, count($expiredMetric), 'Expired metric missing');
+assertSameValue($expectedExpired, (int)$expiredMetric[0]['value'], 'Expired license count mismatch');
+
 $followUp = $resolver->resolve('30 ngày', ['intent' => 'expiring_licenses']);
 assertSameValue('expiring_licenses', $followUp['intent'], 'Follow-up intent mismatch');
 assertSameValue(30, $followUp['params']['days'], 'Follow-up day mismatch');
