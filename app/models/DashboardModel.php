@@ -139,4 +139,54 @@ class DashboardModel
 
         return (int)$this->conn->query("SELECT COUNT(*) FROM {$table}")->fetchColumn();
     }
+public function getTopSoftware(): array
+{
+    $query = "
+        SELECT
+            st.name,
+            COUNT(la.id) AS total
+        FROM license_allocations la
+        JOIN license_keys lk ON la.key_id = lk.id
+        JOIN license_pools lp ON lk.pool_id = lp.id
+        JOIN software_titles st ON lp.software_id = st.id
+        GROUP BY st.id, st.name
+        ORDER BY total DESC
+        LIMIT 5
+    ";
+
+    return $this->conn->query($query)->fetchAll();
+}
+public function getTopDepartments(): array
+{
+    $query = "
+        SELECT
+            d.name,
+            COUNT(la.id) AS total
+        FROM license_allocations la
+        JOIN users u ON la.user_id = u.id
+        JOIN departments d ON u.department_id = d.id
+        GROUP BY d.id, d.name
+        ORDER BY total DESC
+        LIMIT 5
+    ";
+
+    return $this->conn->query($query)->fetchAll();
+}
+public function getUnusedSoftware(): array
+{
+    $query = "
+        SELECT st.name
+        FROM software_titles st
+        LEFT JOIN license_pools lp
+            ON lp.software_id = st.id
+        LEFT JOIN license_keys lk
+            ON lk.pool_id = lp.id
+        LEFT JOIN license_allocations la
+            ON la.key_id = lk.id
+        WHERE la.id IS NULL
+        GROUP BY st.id, st.name
+    ";
+
+    return $this->conn->query($query)->fetchAll();
+}
 }

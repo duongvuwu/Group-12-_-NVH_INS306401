@@ -13,11 +13,23 @@ class DashboardController
 
     public function index(): void
     {
-        $stats = $this->model->getStats();
-        $inventoryChart = $this->model->getInventoryBySoftware();
-        $departmentUsage = $this->model->getDepartmentUsage();
-        $expiringAllocations = $this->model->getExpiringAllocations(14);
+        public function index(): void
+{
+    $stats = $this->model->getStats();
 
-        require BASE_PATH . '/app/views/dashboard_view.php';
+    $inventoryChart = $this->model->getInventoryBySoftware();
+
+    $departmentUsage = $this->model->getDepartmentUsage();
+
+    $expiringAllocations = $this->model->getExpiringAllocations(14);
+
+    $topSoftware = $this->model->getTopSoftware();
+
+    $topDepartments = $this->model->getTopDepartments();
+
+    $unusedSoftware = $this->model->getUnusedSoftware();
+
+    require BASE_PATH . '/app/views/dashboard_view.php';
+}
     }
 }
