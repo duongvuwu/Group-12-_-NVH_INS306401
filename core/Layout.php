@@ -21,6 +21,7 @@ class Layout
             ['page' => 'rules', 'label' => 'Luật cấp phát', 'icon' => 'workflow'],
             ['page' => 'inventory', 'label' => 'Kho license', 'icon' => 'boxes'],
             ['page' => 'allocations', 'label' => 'Cấp phát', 'icon' => 'key-round'],
+            ['page' => 'assets', 'label' => 'Download Center', 'icon' => 'download-cloud'],
         ];
         ?>
 <!DOCTYPE html>
@@ -28,6 +29,7 @@ class Layout
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
     <title><?= e($title) ?> | License Management</title>
     <script>
         if (localStorage.getItem('license-theme') === 'dark') {
@@ -269,7 +271,7 @@ class Layout
         </main>
     </div>
 
-    <nav class="glass-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 rounded-t-2xl p-1.5 shadow-xl lg:hidden">
+    <nav class="glass-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 rounded-t-2xl p-1.5 shadow-xl lg:hidden">
         <?php foreach ($navItems as $item): ?>
             <?php $isActive = $activePage === $item['page']; ?>
             <a href="<?= e(app_url($item['page'])) ?>" class="flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white dark:bg-slate-950 dark:text-white' : 'text-slate-500 hover:bg-white/70 hover:text-slate-950 dark:text-white dark:hover:bg-white/10' ?>">

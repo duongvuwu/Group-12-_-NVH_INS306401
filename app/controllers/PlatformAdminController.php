@@ -16,6 +16,11 @@ class PlatformAdminController
     public function index(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (($_POST['action'] ?? '') === 'user_detail') {
+                $this->handleUserDetailRequest();
+                return;
+            }
+
             $this->handlePost();
         }
 
@@ -33,6 +38,10 @@ class PlatformAdminController
         try {
             require_csrf();
             $action = $_POST['action'] ?? '';
+
+            if ($action === 'export_users') {
+                $this->exportUsersCsv();
+            }
 
             if ($action === 'add_dept') {
                 $id = $this->model->addDepartment($_POST['name'] ?? '', $_POST['description'] ?? null);
@@ -96,5 +105,69 @@ class PlatformAdminController
         $localPart = preg_replace('/[^a-z0-9._-]/', '', $localPart) ?? '';
 
         return $localPart !== '' ? $localPart . '@vnu.edu.vn' : '';
+    }
+
+    private function handleUserDetailRequest(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            require_csrf();
+            $userId = positive_int($_POST['id'] ?? null, 'ID người dùng');
+            $user = $this->model->getUserDetail($userId);
+
+            if ($user === null) {
+                http_response_code(404);
+                echo json_encode(['ok' => false, 'message' => 'Người dùng không tồn tại.'], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            echo json_encode([
+                'ok' => true,
+                'user' => $user,
+                'licenses' => $this->model->getUserLicenses($userId),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        } catch (Throwable $exception) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'message' => $exception->getMessage()], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    private function exportUsersCsv(): void
+    {
+        $users = $this->model->getAllUsers();
+        $this->audit->record('export_users', 'user', null, ['count' => count($users)]);
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="licenseos-users.csv"');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+
+        $output = fopen('php://output', 'wb');
+        if ($output === false) {
+            throw new RuntimeException('Không thể tạo file CSV.');
+        }
+
+        fwrite($output, "\xEF\xBB\xBF");
+        fputcsv($output, ['ID', 'Full name', 'Email', 'Department', 'Role', 'Licenses', 'Created at']);
+
+        foreach ($users as $user) {
+            fputcsv($output, [
+                $user['id'],
+                $this->csvCell((string)$user['full_name']),
+                $this->csvCell((string)$user['email']),
+                $this->csvCell((string)$user['department_name']),
+                $user['role'],
+                $user['allocation_count'],
+                $user['created_at'],
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    private function csvCell(string $value): string
+    {
+        return preg_match('/^[=+\-@]/', $value) ? "'" . $value : $value;
     }
 }

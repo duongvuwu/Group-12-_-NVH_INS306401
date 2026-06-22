@@ -59,7 +59,157 @@
                 document.documentElement.classList.toggle('dark');
                 localStorage.setItem('license-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
                 setTimeout(() => window.renderDashboardCharts && window.renderDashboardCharts(), 80);
+                setTimeout(() => window.renderAssetOsChart && window.renderAssetOsChart(), 80);
             });
+        });
+    }
+
+    function initCopyButtons() {
+        document.addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-copy-text]');
+            if (!button) return;
+
+            const value = button.dataset.copyText || '';
+            try {
+                if (navigator.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(value);
+                } else {
+                    const input = document.createElement('textarea');
+                    input.value = value;
+                    input.style.position = 'fixed';
+                    input.style.opacity = '0';
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    input.remove();
+                }
+                window.showToast('success', window.appI18n?.t('Đã sao chép link tải.') || 'Đã sao chép link tải.');
+            } catch (error) {
+                window.showToast('error', window.appI18n?.t('Không thể sao chép link tải.') || 'Không thể sao chép link tải.');
+            }
+        });
+    }
+
+    function initUserDetailModal() {
+        const modal = document.getElementById('user-detail-modal');
+        if (!modal) return;
+
+        const loading = modal.querySelector('[data-user-detail-loading]');
+        const errorBox = modal.querySelector('[data-user-detail-error]');
+        const content = modal.querySelector('[data-user-detail-content]');
+        const rows = modal.querySelector('[data-user-license-rows]');
+        const translate = (value) => window.appI18n?.t(value) || value;
+
+        const close = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('overflow-hidden');
+        };
+
+        const open = () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('overflow-hidden');
+        };
+
+        const setState = (state, message = '') => {
+            loading.classList.toggle('hidden', state !== 'loading');
+            errorBox.classList.toggle('hidden', state !== 'error');
+            content.classList.toggle('hidden', state !== 'content');
+            errorBox.textContent = message;
+        };
+
+        const createCell = (text, className = 'px-4 py-3 text-sm text-slate-600 dark:text-slate-300') => {
+            const cell = document.createElement('td');
+            cell.className = className;
+            cell.textContent = text;
+            return cell;
+        };
+
+        const renderLicenses = (licenses) => {
+            rows.replaceChildren();
+
+            if (!licenses.length) {
+                const row = document.createElement('tr');
+                const cell = createCell(translate('Người dùng chưa có lịch sử license.'), 'px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400');
+                cell.colSpan = 4;
+                row.appendChild(cell);
+                rows.appendChild(row);
+                return;
+            }
+
+            licenses.forEach((license) => {
+                const row = document.createElement('tr');
+                row.className = 'transition-colors hover:bg-slate-50/80 dark:hover:bg-white/5';
+
+                const software = document.createElement('td');
+                software.className = 'px-4 py-3';
+                const name = document.createElement('p');
+                name.className = 'font-medium text-slate-900 dark:text-white';
+                name.textContent = license.software_name;
+                const vendor = document.createElement('p');
+                vendor.className = 'text-xs text-slate-500 dark:text-slate-400';
+                vendor.textContent = license.vendor;
+                software.append(name, vendor);
+                row.appendChild(software);
+
+                row.appendChild(createCell(license.masked_key || '********', 'px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300'));
+                row.appendChild(createCell(`${license.start_date} → ${license.end_date}`));
+
+                const statusLabels = { Active: 'Đang active', Expired: 'Hết hạn', Revoked: 'Đã thu hồi' };
+                const statusCell = createCell(translate(statusLabels[license.status] || license.status), 'px-4 py-3 text-right');
+                const status = document.createElement('span');
+                const statusPalette = license.status === 'Active'
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200'
+                    : license.status === 'Revoked'
+                        ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-200'
+                        : 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200';
+                status.className = `rounded-lg px-2.5 py-1 text-xs font-semibold ${statusPalette}`;
+                status.textContent = translate(statusLabels[license.status] || license.status);
+                statusCell.replaceChildren(status);
+                row.appendChild(statusCell);
+                rows.appendChild(row);
+            });
+        };
+
+        document.addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-user-detail-id]');
+            if (!button) return;
+
+            open();
+            setState('loading');
+
+            try {
+                const formData = new FormData();
+                formData.set('action', 'user_detail');
+                formData.set('id', button.dataset.userDetailId);
+                formData.set('csrf_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+
+                const response = await fetch(button.dataset.userDetailUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const payload = await response.json();
+                if (!response.ok || !payload.ok) throw new Error(payload.message || translate('Không thể tải chi tiết người dùng.'));
+
+                modal.querySelectorAll('[data-user-field]').forEach((field) => {
+                    const key = field.dataset.userField;
+                    const roleLabels = { Student: 'Sinh viên', Teacher: 'Giảng viên', Admin: 'Quản trị' };
+                    field.textContent = key === 'role' ? translate(roleLabels[payload.user[key]] || payload.user[key]) : (payload.user[key] || '—');
+                });
+                renderLicenses(payload.licenses || []);
+                setState('content');
+            } catch (error) {
+                setState('error', error.message || translate('Không thể tải chi tiết người dùng.'));
+            }
+        });
+
+        modal.querySelectorAll('[data-user-detail-close]').forEach((button) => button.addEventListener('click', close));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
         });
     }
 
@@ -426,8 +576,39 @@
         }
     };
 
+    window.renderAssetOsChart = function () {
+        const canvas = document.getElementById('assetOsChart');
+        if (!window.Chart || !canvas || !window.assetOsStats) return;
+
+        const dark = document.documentElement.classList.contains('dark');
+        const labelColor = dark ? '#cbd5e1' : '#475569';
+        if (window.__assetOsChart) window.__assetOsChart.destroy();
+
+        window.__assetOsChart = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: window.assetOsStats.map((item) => item.os_type),
+                datasets: [{
+                    data: window.assetOsStats.map((item) => Number(item.total)),
+                    backgroundColor: ['#14b8a6', '#6366f1', '#f59e0b', '#ec4899'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '64%',
+                animation: { duration: 1500, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: labelColor, usePointStyle: true, boxWidth: 8 } }
+                }
+            }
+        });
+    };
+
     document.addEventListener('app:languagechange', () => {
         window.renderDashboardCharts();
+        window.renderAssetOsChart();
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -436,6 +617,8 @@
         initTableFilters();
         initTablePagination();
         initConfirmModal();
+        initCopyButtons();
+        initUserDetailModal();
 
         if (window.__FLASH__) {
             window.showToast(window.__FLASH__.type, window.__FLASH__.message);
@@ -443,5 +626,6 @@
 
         window.initRuleSuggestions();
         window.renderDashboardCharts();
+        window.renderAssetOsChart();
     });
 })();

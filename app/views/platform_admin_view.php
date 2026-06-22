@@ -155,7 +155,17 @@ $softwareCount = count($data['softwares']);
                     <p class="text-sm text-slate-500">Email duy nhất, phân quyền theo khoa.</p>
                 </div>
             </div>
-            <input class="input-shell max-w-xs rounded-xl" data-table-filter="users-table" placeholder="Lọc người dùng...">
+            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                <form method="POST">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="export_users">
+                    <button class="secondary-action inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300/80 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/15 dark:bg-white/10 dark:text-white" type="submit">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Xuất danh sách
+                    </button>
+                </form>
+                <input class="input-shell max-w-xs rounded-xl" data-table-filter="users-table" placeholder="Lọc người dùng...">
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table id="users-table" data-page-size="10" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">
@@ -179,6 +189,15 @@ $softwareCount = count($data['softwares']);
                             <td class="px-5 py-4 text-center text-sm"><?= e(role_label($user['role'])) ?></td>
                             <td class="px-5 py-4 text-center text-sm"><?= (int)$user['allocation_count'] ?></td>
                             <td class="px-5 py-4 text-right">
+                                <button
+                                    class="mr-1 inline-flex h-9 w-9 items-center justify-center rounded-xl text-teal-700 transition-all duration-300 hover:-translate-y-1 hover:bg-teal-100 hover:shadow-md dark:text-teal-200 dark:hover:bg-teal-500/15"
+                                    type="button"
+                                    title="Chi tiết"
+                                    data-user-detail-id="<?= (int)$user['id'] ?>"
+                                    data-user-detail-url="<?= e(app_url('admin')) ?>"
+                                >
+                                    <i data-lucide="eye" class="h-4 w-4"></i>
+                                </button>
                                 <form method="POST" class="inline" data-confirm-submit data-confirm-message="Xóa người dùng này? Người dùng đã có lịch sử cấp phát sẽ được hệ thống chặn xóa.">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_user">
@@ -246,6 +265,60 @@ $softwareCount = count($data['softwares']);
     </div>
     <div class="border-t border-white/60 px-5 py-3 dark:border-white/10" data-table-pager="softwares-table"></div>
 </section>
+
+<div id="user-detail-modal" class="fixed inset-0 z-[90] hidden items-center justify-center p-4" aria-hidden="true">
+    <button class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" type="button" data-user-detail-close aria-label="Đóng"></button>
+    <section class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border border-white/50 bg-white/95 p-5 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/95 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="user-detail-title">
+        <div class="flex items-start justify-between gap-4 border-b border-slate-200/80 pb-4 dark:border-white/10">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-teal-300">User license profile</p>
+                <h3 id="user-detail-title" class="mt-1 text-xl font-semibold text-slate-950 dark:text-white">Chi tiết người dùng</h3>
+            </div>
+            <button class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all duration-300 hover:bg-slate-100 dark:border-white/10 dark:text-white dark:hover:bg-white/10" type="button" data-user-detail-close aria-label="Đóng">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+        </div>
+
+        <div class="py-8 text-center text-sm text-slate-500 dark:text-slate-400" data-user-detail-loading>Đang tải dữ liệu...</div>
+        <div class="hidden py-8 text-center text-sm text-rose-600 dark:text-rose-300" data-user-detail-error></div>
+
+        <div class="hidden" data-user-detail-content>
+            <div class="grid gap-3 py-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-lg border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-xs uppercase text-slate-500">Họ tên</p>
+                    <p class="mt-1 font-semibold text-slate-900 dark:text-white" data-user-field="full_name"></p>
+                </div>
+                <div class="rounded-lg border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-xs uppercase text-slate-500">Email</p>
+                    <p class="mt-1 break-all font-semibold text-slate-900 dark:text-white" data-user-field="email"></p>
+                </div>
+                <div class="rounded-lg border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-xs uppercase text-slate-500">Khoa</p>
+                    <p class="mt-1 font-semibold text-slate-900 dark:text-white" data-user-field="department_name"></p>
+                </div>
+                <div class="rounded-lg border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-xs uppercase text-slate-500">Vai trò</p>
+                    <p class="mt-1 font-semibold text-slate-900 dark:text-white" data-user-field="role"></p>
+                </div>
+            </div>
+
+            <h4 class="mb-3 font-semibold text-slate-950 dark:text-white">Lịch sử license</h4>
+            <div class="overflow-x-auto rounded-lg border border-slate-200/80 dark:border-white/10">
+                <table class="min-w-full divide-y divide-slate-200/80 dark:divide-white/10">
+                    <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-white/5 dark:text-slate-400">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Phần mềm</th>
+                            <th class="px-4 py-3 text-left">Key</th>
+                            <th class="px-4 py-3 text-left">Thời hạn</th>
+                            <th class="px-4 py-3 text-right">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-white/10" data-user-license-rows></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
 <?php
 $content = ob_get_clean();
 Layout::render('Quản trị nền tảng', 'admin', $content, ['subtitle' => 'Master Data & Identity']);

@@ -30,6 +30,7 @@ $routes = [
     'rules' => AllocationRuleController::class,
     'inventory' => InventoryController::class,
     'allocations' => LicenseAllocationController::class,
+    'assets' => AssetController::class,
 ];
 
 $page = $_GET['page'] ?? 'dashboard';

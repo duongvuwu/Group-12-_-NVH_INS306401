@@ -82,6 +82,52 @@ class PlatformAdminModel
         return $this->conn->query($query)->fetchAll();
     }
 
+    public function getUserDetail(int $id): ?array
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT
+                u.id,
+                u.full_name,
+                u.email,
+                u.role,
+                u.created_at,
+                d.name AS department_name,
+                COUNT(la.id) AS allocation_count
+             FROM users u
+             JOIN departments d ON d.id = u.department_id
+             LEFT JOIN license_allocations la ON la.user_id = u.id
+             WHERE u.id = :id
+             GROUP BY u.id, u.full_name, u.email, u.role, u.created_at, d.name"
+        );
+        $stmt->execute([':id' => $id]);
+        $user = $stmt->fetch();
+
+        return $user !== false ? $user : null;
+    }
+
+    public function getUserLicenses(int $userId): array
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT
+                la.id,
+                la.status,
+                la.start_date,
+                la.end_date,
+                CONCAT(LEFT(lk.key_value, 4), '****', RIGHT(lk.key_value, 4)) AS masked_key,
+                s.name AS software_name,
+                s.vendor
+             FROM license_allocations la
+             JOIN license_keys lk ON lk.id = la.key_id
+             JOIN license_pools lp ON lp.id = lk.pool_id
+             JOIN software_titles s ON s.id = lp.software_id
+             WHERE la.user_id = :user_id
+             ORDER BY la.created_at DESC, la.id DESC"
+        );
+        $stmt->execute([':user_id' => $userId]);
+
+        return $stmt->fetchAll();
+    }
+
     public function addUser(int $departmentId, string $name, string $email, string $role): int
     {
         $name = trim($name);

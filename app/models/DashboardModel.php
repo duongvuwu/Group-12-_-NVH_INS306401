@@ -130,6 +130,62 @@ class DashboardModel
         return $stmt->fetchAll();
     }
 
+    public function getTopSoftware(int $limit = 5): array
+    {
+        $limit = max(1, min($limit, 10));
+        $query = "SELECT
+                    s.id,
+                    s.name,
+                    s.vendor,
+                    COUNT(la.id) AS allocation_count,
+                    SUM(CASE WHEN la.status = 'Active' THEN 1 ELSE 0 END) AS active_count
+                  FROM software_titles s
+                  LEFT JOIN license_pools lp ON lp.software_id = s.id
+                  LEFT JOIN license_keys lk ON lk.pool_id = lp.id
+                  LEFT JOIN license_allocations la ON la.key_id = lk.id
+                  GROUP BY s.id, s.name, s.vendor
+                  ORDER BY allocation_count DESC, active_count DESC, s.name ASC
+                  LIMIT {$limit}";
+
+        return $this->conn->query($query)->fetchAll();
+    }
+
+    public function getTopDepartments(int $limit = 5): array
+    {
+        $limit = max(1, min($limit, 10));
+        $query = "SELECT
+                    d.id,
+                    d.name,
+                    COUNT(la.id) AS allocation_count,
+                    SUM(CASE WHEN la.status = 'Active' THEN 1 ELSE 0 END) AS active_count
+                  FROM departments d
+                  LEFT JOIN users u ON u.department_id = d.id
+                  LEFT JOIN license_allocations la ON la.user_id = u.id
+                  GROUP BY d.id, d.name
+                  ORDER BY allocation_count DESC, active_count DESC, d.name ASC
+                  LIMIT {$limit}";
+
+        return $this->conn->query($query)->fetchAll();
+    }
+
+    public function getUnusedSoftware(int $limit = 5): array
+    {
+        $limit = max(1, min($limit, 10));
+        $query = "SELECT s.id, s.name, s.vendor
+                  FROM software_titles s
+                  WHERE NOT EXISTS (
+                      SELECT 1
+                      FROM license_pools lp
+                      JOIN license_keys lk ON lk.pool_id = lp.id
+                      JOIN license_allocations la ON la.key_id = lk.id
+                      WHERE lp.software_id = s.id
+                  )
+                  ORDER BY s.name ASC
+                  LIMIT {$limit}";
+
+        return $this->conn->query($query)->fetchAll();
+    }
+
     private function countTable(string $table): int
     {
         $allowedTables = ['departments', 'users', 'software_titles', 'license_keys'];

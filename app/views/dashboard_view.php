@@ -118,6 +118,65 @@ $cards = [
     </article>
 </section>
 
+<section class="mt-5 grid gap-5 xl:grid-cols-3">
+    <article class="rounded-lg border border-white/45 bg-white/70 p-5 shadow-sm backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-slate-950/55">
+        <p class="text-xs font-semibold uppercase tracking-[.24em] text-teal-600 dark:text-teal-300">Top software</p>
+        <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Phần mềm được cấp nhiều nhất</h3>
+        <div class="mt-5 space-y-3">
+            <?php foreach ($topSoftware as $index => $software): ?>
+                <div class="flex items-center gap-3 rounded-lg border border-slate-200/70 bg-white/45 p-3 dark:border-white/10 dark:bg-white/5">
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-teal-500/10 text-sm font-bold text-teal-700 dark:text-teal-200"><?= $index + 1 ?></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate font-medium text-slate-900 dark:text-slate-100"><?= e($software['name']) ?></p>
+                        <p class="truncate text-xs text-slate-500 dark:text-slate-400"><?= e($software['vendor']) ?></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-slate-900 dark:text-slate-100"><?= (int)$software['allocation_count'] ?></p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400"><?= (int)$software['active_count'] ?> active</p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </article>
+
+    <article class="rounded-lg border border-white/45 bg-white/70 p-5 shadow-sm backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-slate-950/55">
+        <p class="text-xs font-semibold uppercase tracking-[.24em] text-indigo-600 dark:text-indigo-300">Department adoption</p>
+        <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Khoa sử dụng license nhiều nhất</h3>
+        <div class="mt-5 space-y-3">
+            <?php foreach ($topDepartments as $index => $department): ?>
+                <div class="flex items-center gap-3 rounded-lg border border-slate-200/70 bg-white/45 p-3 dark:border-white/10 dark:bg-white/5">
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-indigo-500/10 text-sm font-bold text-indigo-700 dark:text-indigo-200"><?= $index + 1 ?></span>
+                    <p class="min-w-0 flex-1 truncate font-medium text-slate-900 dark:text-slate-100"><?= e($department['name']) ?></p>
+                    <div class="text-right">
+                        <p class="font-semibold text-slate-900 dark:text-slate-100"><?= (int)$department['allocation_count'] ?></p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400"><?= (int)$department['active_count'] ?> active</p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </article>
+
+    <article class="rounded-lg border border-white/45 bg-white/70 p-5 shadow-sm backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-slate-950/55">
+        <p class="text-xs font-semibold uppercase tracking-[.24em] text-amber-600 dark:text-amber-300">Adoption gap</p>
+        <h3 class="dashboard-readable mt-1 text-lg font-semibold text-slate-950 dark:text-slate-200">Phần mềm chưa từng được cấp</h3>
+        <div class="mt-5 space-y-3">
+            <?php if ($unusedSoftware): ?>
+                <?php foreach ($unusedSoftware as $software): ?>
+                    <div class="flex items-center gap-3 rounded-lg border border-slate-200/70 bg-white/45 p-3 dark:border-white/10 dark:bg-white/5">
+                        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-200">!</span>
+                        <div class="min-w-0">
+                            <p class="truncate font-medium text-slate-900 dark:text-slate-100"><?= e($software['name']) ?></p>
+                            <p class="truncate text-xs text-slate-500 dark:text-slate-400"><?= e($software['vendor']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 dark:border-white/15 dark:text-slate-400">Tất cả phần mềm đã có lịch sử cấp phát.</p>
+            <?php endif; ?>
+        </div>
+    </article>
+</section>
+
 <section class="mt-5 rounded-lg border border-white/45 bg-white/70 shadow-sm backdrop-blur-2xl transition-all duration-300 hover:shadow-xl dark:border-white/10 dark:bg-slate-950/55">
     <div class="flex flex-col gap-3 border-b border-slate-200/70 px-5 py-4 dark:border-slate-700/60 sm:flex-row sm:items-center sm:justify-between">
         <div>
