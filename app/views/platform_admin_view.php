@@ -195,6 +195,11 @@ $softwareCount = count($data['softwares']);
                             <td class="px-5 py-4 text-center text-sm"><?= e(role_label($user['role'])) ?></td>
                             <td class="px-5 py-4 text-center text-sm"><?= (int)$user['allocation_count'] ?></td>
                             <td class="px-5 py-4 text-right">
+                                <button
+                                    onclick="openUserModal(<?= $user['id'] ?>)"
+                                    class="text-blue-500 hover:text-blue-700">
+                                    Chi tiết
+                            </button>
                                 <form method="POST" class="inline" data-confirm-submit data-confirm-message="Xóa người dùng này? Người dùng đã có lịch sử cấp phát sẽ được hệ thống chặn xóa.">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete_user">

@@ -248,4 +248,37 @@ class PlatformAdminModel
 
         return (int)$stmt->fetchColumn();
     }
+    public function getUserDetail(int $id): array
+   {
+    $stmt = $this->db->prepare("
+        SELECT
+            u.full_name,
+            u.email,
+            u.role,
+            d.name AS department
+        FROM users u
+        LEFT JOIN departments d
+            ON u.department_id = d.id
+        WHERE u.id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 }
+
+public function getUserLicenses(int $id): array
+{
+    $stmt = $this->db->prepare("
+        SELECT s.name
+        FROM allocation_rules ar
+        JOIN software_titles s
+            ON ar.software_id = s.id
+        WHERE ar.user_id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+} 
