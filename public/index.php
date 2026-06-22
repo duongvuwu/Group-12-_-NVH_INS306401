@@ -30,6 +30,10 @@ $routes = [
     'rules' => AllocationRuleController::class,
     'inventory' => InventoryController::class,
     'allocations' => LicenseAllocationController::class,
+    
+    // Đã thêm 2 module của bro vào Router
+    'assets' => AssetController::class,
+    'stats' => AssetController::class,
 ];
 
 $page = $_GET['page'] ?? 'dashboard';

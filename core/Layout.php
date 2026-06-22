@@ -15,12 +15,15 @@ class Layout
         $appJsVersion = is_file($appJsPath) ? (string)filemtime($appJsPath) : (string)time();
         $i18nJsPath = BASE_PATH . '/public/assets/i18n.js';
         $i18nJsVersion = is_file($i18nJsPath) ? (string)filemtime($i18nJsPath) : (string)time();
+        
+        // ĐÃ THÊM 'assets' VÀO MẢNG NAV NÀY
         $navItems = [
             ['page' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
             ['page' => 'admin', 'label' => 'Nền tảng', 'icon' => 'building-2'],
             ['page' => 'rules', 'label' => 'Luật cấp phát', 'icon' => 'workflow'],
             ['page' => 'inventory', 'label' => 'Kho license', 'icon' => 'boxes'],
             ['page' => 'allocations', 'label' => 'Cấp phát', 'icon' => 'key-round'],
+            ['page' => 'assets', 'label' => 'Download Center', 'icon' => 'download-cloud'], // Phần của bro đây
         ];
         ?>
 <!DOCTYPE html>
@@ -269,7 +272,7 @@ class Layout
         </main>
     </div>
 
-    <nav class="glass-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 rounded-t-2xl p-1.5 shadow-xl lg:hidden">
+    <nav class="glass-panel fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 rounded-t-2xl p-1.5 shadow-xl lg:hidden">
         <?php foreach ($navItems as $item): ?>
             <?php $isActive = $activePage === $item['page']; ?>
             <a href="<?= e(app_url($item['page'])) ?>" class="flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md <?= $isActive ? 'bg-slate-950 text-white dark:bg-slate-950 dark:text-white' : 'text-slate-500 hover:bg-white/70 hover:text-slate-950 dark:text-white dark:hover:bg-white/10' ?>">

@@ -6,7 +6,7 @@ class Database
     private string $host = '127.0.0.1';
     private string $dbname = 'license_management_db';
     private string $username = 'root';
-    private string $password = '';
+    private string $password = ''; // Bro nhớ tự điền lại mật khẩu MySQL của máy bro vào giữa 2 dấu nháy đơn này nhé
     private ?PDO $conn = null;
 
     public function getConnection(): PDO
@@ -15,7 +15,8 @@ class Database
             return $this->conn;
         }
 
-        $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
+        // Đã thêm port=3307 vào chuỗi kết nối
+        $dsn = "mysql:host={$this->host};port=3307;dbname={$this->dbname};charset=utf8mb4";
 
         try {
             $this->conn = new PDO($dsn, $this->username, $this->password, [
@@ -31,3 +32,4 @@ class Database
         return $this->conn;
     }
 }
+?>
