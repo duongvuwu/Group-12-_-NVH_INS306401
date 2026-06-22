@@ -155,7 +155,23 @@ $softwareCount = count($data['softwares']);
                     <p class="text-sm text-slate-500">Email duy nhất, phân quyền theo khoa.</p>
                 </div>
             </div>
-            <input class="input-shell max-w-xs rounded-xl" data-table-filter="users-table" placeholder="Lọc người dùng...">
+    <div class="flex items-center gap-2">
+         <form method="POST">
+               <?= csrf_field() ?>
+               <input type="hidden" name="action" value="export_users">
+
+               <button
+                   type="submit"
+                   class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                   Export CSV
+         </button>
+    </form>
+
+    <input
+        class="input-shell max-w-xs rounded-xl"
+        data-table-filter="users-table"
+        placeholder="Lọc người dùng...">
+</div>
         </div>
         <div class="overflow-x-auto">
             <table id="users-table" data-page-size="10" class="min-w-full divide-y divide-slate-200/80 dark:divide-slate-700">

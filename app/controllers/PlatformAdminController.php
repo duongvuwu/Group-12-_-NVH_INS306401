@@ -34,6 +34,10 @@ class PlatformAdminController
             require_csrf();
             $action = $_POST['action'] ?? '';
 
+            if ($action === 'export_users') {
+                $this->exportUsersCsv();
+            }
+
             if ($action === 'add_dept') {
                 $id = $this->model->addDepartment($_POST['name'] ?? '', $_POST['description'] ?? null);
                 $this->audit->record('create_department', 'department', $id, ['name' => $_POST['name'] ?? '']);
@@ -85,6 +89,36 @@ class PlatformAdminController
         }
     }
 
+    private function exportUsersCsv(): void
+{
+    $users = $this->model->getAllUsers();
+
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="users.csv"');
+
+    $file = fopen('php://output', 'w');
+
+    fputcsv($file, [
+        'ID',
+        'Full Name',
+        'Email',
+        'Department',
+        'Role'
+    ]);
+
+    foreach ($users as $user) {
+        fputcsv($file, [
+            $user['id'],
+            $user['full_name'],
+            $user['email'],
+            $user['department_name'],
+            $user['role']
+        ]);
+    }
+
+    fclose($file);
+    exit;
+}
     private function buildVnuEmail(string $value): string
     {
         $raw = strtolower(trim($value));
