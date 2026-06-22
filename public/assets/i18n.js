@@ -23,6 +23,17 @@
         'Sau': 'Next',
         'Không có nội dung phù hợp': 'No matching content',
 
+        // LicenseOS Assistant widget.
+        'Dữ liệu trực tiếp': 'Live data',
+        'Cuộc trò chuyện mới': 'New conversation',
+        'Đóng trợ lý': 'Close assistant',
+        'Đang phân tích dữ liệu...': 'Analyzing data...',
+        'Hỏi về license, hết hạn, tồn kho...': 'Ask about licenses, expiry, inventory...',
+        'Câu hỏi cho LicenseOS Assistant': 'Question for LicenseOS Assistant',
+        'Gửi câu hỏi': 'Send question',
+        'Truy vấn chỉ đọc, không hiển thị license key.': 'Read-only queries. License keys are never displayed.',
+        'Mở LicenseOS Assistant': 'Open LicenseOS Assistant',
+
         // Dashboard.
         'Dashboard vận hành License': 'License Operations Dashboard',
         'Theo dõi tồn kho key, license đang dùng, nhu cầu theo khoa và cảnh báo hết hạn trong một màn hình điều phối gọn, mượt, đúng chuẩn XAMPP localhost.': 'Monitor key inventory, active licenses, department demand, and expiry alerts from one streamlined XAMPP-ready workspace.',

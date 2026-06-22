@@ -1,0 +1,161 @@
+erDiagram
+    departments {
+        INT id PK
+        VARCHAR name UK
+        VARCHAR description
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    users {
+        INT id PK
+        INT department_id FK
+        VARCHAR full_name
+        VARCHAR email UK
+        ENUM role "Student|Teacher|Admin"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    software_titles {
+        INT id PK
+        VARCHAR name
+        VARCHAR vendor
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        UNIQUE name_vendor
+    }
+
+    software_assets {
+        INT id PK
+        INT software_id FK
+        VARCHAR version
+        ENUM os_type "Windows|macOS|Linux|Web"
+        VARCHAR download_url
+        TIMESTAMP created_at
+    }
+
+    license_pools {
+        INT id PK
+        INT software_id FK
+        INT total_quantity
+        INT available_quantity
+        DATE purchase_date
+        DATE expires_at
+        BOOLEAN reusable_after_revocation
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    license_keys {
+        INT id PK
+        INT pool_id FK
+        VARCHAR key_value UK
+        BOOLEAN is_assigned
+        DATETIME assigned_at
+        TIMESTAMP created_at
+    }
+
+    allocation_rules {
+        INT id PK
+        INT software_id FK
+        INT department_id FK
+        ENUM target_role "Student|Teacher|Admin|All"
+        TIMESTAMP created_at
+        UNIQUE software_department_role
+    }
+
+    license_allocations {
+        INT id PK
+        INT user_id FK
+        INT key_id FK
+        DATETIME start_date
+        DATETIME end_date
+        ENUM status "Active|Expired|Revoked"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    activation_logs {
+        INT id PK
+        INT allocation_id FK
+        DATETIME activation_time
+        VARCHAR ip_address
+    }
+
+    expiry_notifications {
+        INT id PK
+        INT allocation_id FK
+        DATETIME sent_time
+        ENUM alert_type "7_days|1_day"
+        UNIQUE allocation_alert
+    }
+
+    revocation_logs {
+        INT id PK
+        INT allocation_id FK
+        DATETIME revocation_time
+        VARCHAR reason
+    }
+
+    usage_stats {
+        INT id PK
+        INT software_id FK
+        INT department_id FK
+        INT active_count
+        CHAR report_period
+        TIMESTAMP created_at
+        UNIQUE software_department_period
+    }
+
+    audit_logs {
+        INT id PK
+        VARCHAR actor
+        VARCHAR action
+        VARCHAR entity_type "soft table reference"
+        INT entity_id "soft record reference, no FK"
+        JSON context_json
+        VARCHAR ip_address
+        TIMESTAMP created_at
+    }
+
+    assistant_conversations {
+        BIGINT id PK
+        CHAR session_token UK
+        ENUM language "vi|en"
+        JSON metadata_json
+        TIMESTAMP started_at
+        TIMESTAMP last_activity_at
+    }
+
+    assistant_messages {
+        BIGINT id PK
+        BIGINT conversation_id FK
+        ENUM sender "User|Assistant|System"
+        VARCHAR intent
+        TEXT message_text
+        JSON response_json
+        ENUM status "Success|NoMatch|Error"
+        INT duration_ms
+        TIMESTAMP created_at
+    }
+
+    departments ||--o{ users : has
+    departments ||--o{ allocation_rules : scopes
+    departments ||--o{ usage_stats : reports
+
+    software_titles ||--o{ software_assets : provides
+    software_titles ||--o{ license_pools : owns
+    software_titles ||--o{ allocation_rules : governs
+    software_titles ||--o{ usage_stats : reports
+
+    license_pools ||--o{ license_keys : contains
+
+    users ||--o{ license_allocations : receives
+    license_keys ||--o{ license_allocations : allocation_history
+
+    license_allocations ||--o{ activation_logs : records
+    license_allocations ||--o{ expiry_notifications : alerts
+    license_allocations ||--o{ revocation_logs : revokes
+
+    assistant_conversations ||--o{ assistant_messages : contains

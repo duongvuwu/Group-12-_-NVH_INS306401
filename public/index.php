@@ -13,6 +13,7 @@ spl_autoload_register(static function (string $class): void {
     $locations = [
         BASE_PATH . '/app/controllers/' . $class . '.php',
         BASE_PATH . '/app/models/' . $class . '.php',
+        BASE_PATH . '/app/services/' . $class . '.php',
         BASE_PATH . '/core/' . $class . '.php',
     ];
 
@@ -31,6 +32,7 @@ $routes = [
     'inventory' => InventoryController::class,
     'allocations' => LicenseAllocationController::class,
     'assets' => AssetController::class,
+    'assistant' => LicenseAssistantController::class,
 ];
 
 $page = $_GET['page'] ?? 'dashboard';

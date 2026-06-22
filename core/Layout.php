@@ -15,6 +15,8 @@ class Layout
         $appJsVersion = is_file($appJsPath) ? (string)filemtime($appJsPath) : (string)time();
         $i18nJsPath = BASE_PATH . '/public/assets/i18n.js';
         $i18nJsVersion = is_file($i18nJsPath) ? (string)filemtime($i18nJsPath) : (string)time();
+        $assistantJsPath = BASE_PATH . '/public/assets/assistant.js';
+        $assistantJsVersion = is_file($assistantJsPath) ? (string)filemtime($assistantJsPath) : (string)time();
         $navItems = [
             ['page' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
             ['page' => 'admin', 'label' => 'Nền tảng', 'icon' => 'building-2'],
@@ -304,11 +306,14 @@ class Layout
         </div>
     </div>
 
+    <?php require BASE_PATH . '/app/views/partials/license_assistant_widget.php'; ?>
+
     <script>
         window.__FLASH__ = <?= json_encode($flash, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     </script>
     <script src="assets/i18n.js?v=<?= e($i18nJsVersion) ?>"></script>
     <script src="assets/app.js?v=<?= e($appJsVersion) ?>"></script>
+    <script src="assets/assistant.js?v=<?= e($assistantJsVersion) ?>"></script>
     <?= $extraScripts ?>
 </body>
 </html>
